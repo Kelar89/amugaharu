@@ -2,11 +2,8 @@
 
 /*
   AMU GAHARU - app.js
-  - Versi 4.3 (UI/UX Tweaks, Copywriting Hook, Animations)
-  - Re-introduce smoke effect.
-  - Add typewriter effect for hero subheadline.
-  - Implement menu overlay logic.
-  - Keep previous fixes (JSON data, buttons, notes).
+  - Versi 4.3.1 (Fix Komentar Bocor)
+  - [FIX] Menghapus komentar kode yang bocor di renderProducts.
 */
 
 /***** Configuration *****/
@@ -14,9 +11,8 @@ const CONFIG = {
   brand: 'AMU GAHARU',
   waNumber: '6285894448143',
   currency: 'Rp',
-  packingFee: 10000,
+  packingFee: 2000,
   promo: { weekendDiscountPercent: 10 },
-  // [BARU] Teks untuk Typewriter
   typewriterTexts: [
     "Kayu dan Minyak Gaharu 100% Asli Nusantara.",
     "Pilihan Kolektor & Pecinta Aroma Berkualitas.",
@@ -62,14 +58,15 @@ async function init(){
   checkPromo();
   initFaq();
   initScrollAnimations();
-  initSmokeEffect(); // Re-initialize smoke effect
-  startTypewriter(); // Start typewriter effect
+  initSmokeEffect();
+  startTypewriter();
 
   gaTrack('page_view');
 
   setTimeout(()=>document.getElementById('loader').style.display='none', 500);
 }
 
+// [FIXED] Menghapus komentar yang bocor dari template innerHTML
 function renderProducts(){
   const grid = document.getElementById('productGrid'); grid.innerHTML='';
   const q = document.getElementById('searchInput').value.toLowerCase();
@@ -88,6 +85,7 @@ function renderProducts(){
 
   list.forEach(p=>{
     const div = document.createElement('div'); div.className='product reveal';
+    // Perhatikan baris di bawah ini, komentarnya sudah dihapus total
     div.innerHTML = `
       <div class='badge'>${p.category}</div>
       <div class='img'><img src='${p.img}' alt='${p.name}' loading='lazy'></div>
@@ -99,7 +97,6 @@ function renderProducts(){
           <div class='ghost' style='font-size:12px'>Stok: ${p.stock}</div>
         </div>
         <div class='prod-actions'>
-          {/* [BARU] CTA Sekunder Langsung ke WA */}
           <button class='icon-btn' onclick='openWhatsAppProduct("${p.id}")' title="Tanya Produk Ini via WA">
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
                <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.57 6.57 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zm-1.07-5.115c-.083-.41-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/>
@@ -127,7 +124,6 @@ function filterByCategory(category){
   gaTrack('filter_by_category', { category: category });
 }
 
-// [BARU] Fungsi WA khusus produk
 function openWhatsAppProduct(id) {
     const p = PRODUCTS.find(x => x.id === id);
     if (!p) return;
@@ -317,13 +313,12 @@ function checkoutToWhatsApp() {
 
   const orderNote = document.getElementById('orderNote').value.trim();
 
-  const customerName = "Umar"; // Ganti dengan data asli
-  const customerPhone = "085894448146"; // Ganti dengan data asli
-  const customerAddress = "petmaburan 89, RT 4/RW 6, Kel. per, Kec. asdfs, rwe324 10260"; // Ganti dengan data asli
-  const customerPinpoint = "Tidak Dibagikan"; // Ganti dengan data asli
-  const shippingMethod = localStorage.getItem('shippingMethod') || 'internal'; // Ganti dengan data asli
-  const paymentMethod = "Transfer BCA"; // Ganti dengan data asli
-
+  const customerName = "Umar";
+  const customerPhone = "085894448146";
+  const customerAddress = "petmaburan 89, RT 4/RW 6, Kel. per, Kec. asdfs, rwe324 10260";
+  const customerPinpoint = "Tidak Dibagikan";
+  const shippingMethod = localStorage.getItem('shippingMethod') || 'internal';
+  const paymentMethod = "Transfer BCA";
 
   let shippingCost = 0;
   let estimatedTime = "Sesuai Aplikasi Ojol";
@@ -497,7 +492,7 @@ function attachMenuEvents() {
   });
 }
 
-/***** [BARU] Typewriter Effect Logic *****/
+/***** Typewriter Effect Logic *****/
 function startTypewriter() {
     const subheadlineElement = document.getElementById('heroSubheadline');
     if (!subheadlineElement) return;
@@ -505,20 +500,18 @@ function startTypewriter() {
     let textIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
-    const typingSpeed = 100; // milliseconds per character
+    const typingSpeed = 100;
     const deletingSpeed = 50;
-    const delayBetweenTexts = 2000; // milliseconds
+    const delayBetweenTexts = 2000;
 
     function type() {
         const currentText = CONFIG.typewriterTexts[textIndex];
         let displayText = '';
 
         if (isDeleting) {
-            // Deleting phase
             displayText = currentText.substring(0, charIndex - 1);
             charIndex--;
         } else {
-            // Typing phase
             displayText = currentText.substring(0, charIndex + 1);
             charIndex++;
         }
@@ -528,24 +521,20 @@ function startTypewriter() {
         let typeSpeed = isDeleting ? deletingSpeed : typingSpeed;
 
         if (!isDeleting && charIndex === currentText.length) {
-            // Finished typing this text
-            typeSpeed = delayBetweenTexts; // Pause before deleting
+            typeSpeed = delayBetweenTexts;
             isDeleting = true;
         } else if (isDeleting && charIndex === 0) {
-            // Finished deleting this text
             isDeleting = false;
-            textIndex = (textIndex + 1) % CONFIG.typewriterTexts.length; // Move to next text
-            typeSpeed = 500; // Short pause before typing next text
+            textIndex = (textIndex + 1) % CONFIG.typewriterTexts.length;
+            typeSpeed = 500;
         }
 
         setTimeout(type, typeSpeed);
     }
-
-    // Initial call
-    setTimeout(type, 500); // Start after a short delay
+    setTimeout(type, 500);
 }
 
-/***** [BARU] Smoke Effect Logic *****/
+/***** Smoke Effect Logic *****/
 function initSmokeEffect() {
   const canvas = document.getElementById('smokeCanvas');
   if (!canvas) return;
@@ -562,8 +551,11 @@ function initSmokeEffect() {
     this.y = canvas.height + Math.random() * 100;
     this.vx = (Math.random() - 0.5) * 0.3;
     this.vy = -(Math.random() * 1.5 + 0.5);
-    this.radius = Math.random() * 30 + 20;
-    this.alpha = Math.random() * 0.1 + 0.05;
+    this.radius = Math.random() * 40 + 25;
+    this.initialAlpha = Math.random() * 0.1 + 0.08;
+    this.alpha = this.initialAlpha;
+    this.life = 0;
+    this.maxLife = 200 + Math.random() * 100;
   }
 
   function createParticles() {
@@ -576,21 +568,22 @@ function initSmokeEffect() {
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    particles.forEach(p => {
+    particles.forEach((p, index) => {
       p.x += p.vx;
       p.y += p.vy;
+      p.life++;
 
-      if (p.y < -p.radius) {
-        p.x = Math.random() * canvas.width;
-        p.y = canvas.height + p.radius;
-        p.alpha = Math.random() * 0.1 + 0.05;
+      if (p.y < -p.radius || p.life > p.maxLife) {
+        particles[index] = new Particle();
+        p = particles[index];
+      } else {
+         p.alpha = p.initialAlpha * (1 - p.life / p.maxLife);
+         p.alpha = Math.max(0, p.alpha);
       }
 
-      p.alpha *= 0.995;
-
       let gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-      gradient.addColorStop(0, `rgba(197, 155, 75, ${p.alpha * 0.5})`);
-      gradient.addColorStop(0.5, `rgba(197, 155, 75, ${p.alpha * 0.2})`);
+      gradient.addColorStop(0, `rgba(197, 155, 75, ${p.alpha * 0.4})`);
+      gradient.addColorStop(0.7, `rgba(197, 155, 75, ${p.alpha * 0.1})`);
       gradient.addColorStop(1, `rgba(197, 155, 75, 0)`);
 
       ctx.fillStyle = gradient;
@@ -605,20 +598,26 @@ function initSmokeEffect() {
   createParticles();
   animate();
 
-  window.addEventListener('resize', () => {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-    createParticles();
-  });
+   let resizeTimeout;
+   window.addEventListener('resize', () => {
+       clearTimeout(resizeTimeout);
+       resizeTimeout = setTimeout(() => {
+           if (canvas.clientWidth > 0 && canvas.clientHeight > 0) {
+               canvas.width = canvas.clientWidth;
+               canvas.height = canvas.clientHeight;
+               createParticles();
+           }
+       }, 250);
+   });
 }
 
 
 /***** Init listeners *****/
 function attachEvents(){
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') { closeModal('productModal'); closeModal('cartModal'); document.getElementById('menuOverlay').classList.remove('open'); } }); // Also close overlay
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') { closeModal('productModal'); closeModal('cartModal'); document.getElementById('menuOverlay').classList.remove('open'); } });
 
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click', function(e){
-    if (!a.closest('.overlay-nav')) { // Don't prevent default for overlay links
+    if (!a.closest('.overlay-nav')) {
       e.preventDefault();
     }
     const tgt = this.getAttribute('href'); if(tgt==='#') return;
