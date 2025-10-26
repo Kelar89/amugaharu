@@ -3,23 +3,32 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - main # Or whichever branch triggers the deploy
+  workflow_dispatch:
+
+# [TAMBAHKAN INI] Memberikan izin tulis ke GITHUB_TOKEN
+permissions:
+  contents: write # Izin untuk menulis ke repo (push ke gh-pages)
+  pages: write    # Izin untuk deployment GitHub Pages
+  id-token: write # Diperlukan oleh beberapa actions
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Gunakan versi terbaru jika memungkinkan
 
-      - name: Setup Node (for any future build)
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      # ... langkah build Anda (jika ada) ...
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v4 # Gunakan versi terbaru
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          # If you want to publish a subfolder like /docs, change publish_dir accordingly
+          publish_dir: ./ # Pastikan ini adalah folder yang benar
+          # publish_branch: gh-pages # Defaultnya sudah gh-pages, bisa dihapus jika default
+          # user_name: 'github-actions[bot]' # Default
+          # user_email: 'github-actions[bot]@users.noreply.github.com' # Default
+          # commit_message: ${{ github.event.head_commit.message }} # Default
+
+      # ... langkah lain (jika ada) ...
