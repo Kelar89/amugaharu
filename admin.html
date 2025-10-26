@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Produk — AMU GAHARU</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <link rel="icon" href="img/logo1.ico" type="image/x-icon"> </head>
+<body>
+
+  <div class="container">
+    <h1>Admin Editor Produk — AMU GAHARU</h1>
+
+    <div class="main-layout">
+      <div class="product-list-section">
+        <h2>Daftar Produk (<span id="productCount">0</span>)</h2>
+        <div class="export-buttons">
+          <button class="btn btn-download" id="downloadBtn">Download products.json</button>
+          <button class="btn btn-copy" id="copyBtn">Copy JSON</button>
+        </div>
+        <div id="productList">
+          <p class="ghost">Memuat produk...</p>
+          </div>
+      </div>
+
+      <div class="form-section card">
+        <h2 id="formTitle">Tambah Produk Baru</h2>
+        <form id="productForm">
+          <div class="form-group">
+            <label for="prodId">ID Produk*</label>
+            <input type="text" id="prodId" required placeholder="Contoh: p1, p2, ...">
+            <small>ID unik untuk produk (jangan diubah jika mengedit).</small>
+          </div>
+          <div class="form-group">
+            <label for="prodName">Nama Produk*</label>
+            <input type="text" id="prodName" required placeholder="Contoh: Kayu Gaharu Super">
+          </div>
+          <div class="form-group">
+            <label for="prodCategory">Kategori*</label>
+            <input type="text" id="prodCategory" required placeholder="Contoh: Kayu, Minyak, Aksesoris">
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="prodPrice">Harga*</label>
+              <input type="number" id="prodPrice" required placeholder="Contoh: 1500000" min="0">
+            </div>
+            <div class="form-group">
+              <label for="prodUnit">Unit</label>
+              <input type="text" id="prodUnit" placeholder="Contoh: kg, botol, pcs, pack">
+            </div>
+            <div class="form-group">
+              <label for="prodStock">Stok*</label>
+              <input type="number" id="prodStock" required placeholder="Contoh: 5" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="prodImg">Path Gambar*</label>
+            <input type="text" id="prodImg" required placeholder="Contoh: img/p1.jpg">
+            <small>Pastikan gambar sudah diunggah ke folder 'img'.</small>
+          </div>
+          <div class="form-group">
+            <label for="prodDesc">Deskripsi</label>
+            <textarea id="prodDesc" rows="3" placeholder="Deskripsi singkat produk..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-save" id="saveBtn">Tambah Produk</button>
+            <button type="button" class="btn btn-cancel" id="cancelBtn" style="display: none;">Batal Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Alur Kerja:</strong>
+      <ol>
+        <li>Data produk dari <code>products.json</code> otomatis dimuat saat halaman dibuka.</li>
+        <li>Gunakan form untuk <strong>Tambah Produk Baru</strong> atau klik <strong>Edit</strong> pada daftar produk.</li>
+        <li>Setelah selesai menambah/mengedit/menghapus, klik <strong>Download products.json</strong> atau <strong>Copy JSON</strong>.</li>
+        <li>Upload file <code>products.json</code> yang baru ke repository GitHub Anda (timpa file lama).</li>
+      </ol>
+      Pastikan path gambar benar dan JSON yang dihasilkan valid sebelum diupload.
+    </div>
+  </div><script src="admin-app.js"></script>
+</body>
+</html><!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Produk — AMU GAHARU</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <link rel="icon" href="img/logo1.ico" type="image/x-icon"> </head>
+<body>
+
+  <div class="container">
+    <h1>Admin Editor Produk — AMU GAHARU</h1>
+
+    <div class="main-layout">
+      <div class="product-list-section">
+        <h2>Daftar Produk (<span id="productCount">0</span>)</h2>
+        <div class="export-buttons">
+          <button class="btn btn-download" id="downloadBtn">Download products.json</button>
+          <button class="btn btn-copy" id="copyBtn">Copy JSON</button>
+        </div>
+        <div id="productList">
+          <p class="ghost">Memuat produk...</p>
+          </div>
+      </div>
+
+      <div class="form-section card">
+        <h2 id="formTitle">Tambah Produk Baru</h2>
+        <form id="productForm">
+          <div class="form-group">
+            <label for="prodId">ID Produk*</label>
+            <input type="text" id="prodId" required placeholder="Contoh: p1, p2, ...">
+            <small>ID unik untuk produk (jangan diubah jika mengedit).</small>
+          </div>
+          <div class="form-group">
+            <label for="prodName">Nama Produk*</label>
+            <input type="text" id="prodName" required placeholder="Contoh: Kayu Gaharu Super">
+          </div>
+          <div class="form-group">
+            <label for="prodCategory">Kategori*</label>
+            <input type="text" id="prodCategory" required placeholder="Contoh: Kayu, Minyak, Aksesoris">
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="prodPrice">Harga*</label>
+              <input type="number" id="prodPrice" required placeholder="Contoh: 1500000" min="0">
+            </div>
+            <div class="form-group">
+              <label for="prodUnit">Unit</label>
+              <input type="text" id="prodUnit" placeholder="Contoh: kg, botol, pcs, pack">
+            </div>
+            <div class="form-group">
+              <label for="prodStock">Stok*</label>
+              <input type="number" id="prodStock" required placeholder="Contoh: 5" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="prodImg">Path Gambar*</label>
+            <input type="text" id="prodImg" required placeholder="Contoh: img/p1.jpg">
+            <small>Pastikan gambar sudah diunggah ke folder 'img'.</small>
+          </div>
+          <div class="form-group">
+            <label for="prodDesc">Deskripsi</label>
+            <textarea id="prodDesc" rows="3" placeholder="Deskripsi singkat produk..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-save" id="saveBtn">Tambah Produk</button>
+            <button type="button" class="btn btn-cancel" id="cancelBtn" style="display: none;">Batal Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Alur Kerja:</strong>
+      <ol>
+        <li>Data produk dari <code>products.json</code> otomatis dimuat saat halaman dibuka.</li>
+        <li>Gunakan form untuk <strong>Tambah Produk Baru</strong> atau klik <strong>Edit</strong> pada daftar produk.</li>
+        <li>Setelah selesai menambah/mengedit/menghapus, klik <strong>Download products.json</strong> atau <strong>Copy JSON</strong>.</li>
+        <li>Upload file <code>products.json</code> yang baru ke repository GitHub Anda (timpa file lama).</li>
+      </ol>
+      Pastikan path gambar benar dan JSON yang dihasilkan valid sebelum diupload.
+    </div>
+  </div><script src="admin-app.js"></script>
+</body>
+</html>
