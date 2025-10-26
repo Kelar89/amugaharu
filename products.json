@@ -1,0 +1,102 @@
+[
+  {
+    "id": "p1",
+    "name": "Kayu Gaharu Super",
+    "category": "Kayu",
+    "price": 1500000,
+    "unit": "kg",
+    "stock": 5,
+    "img": "img/p1.jpg",
+    "desc": "Serat padat pilihan, aroma kuat & langka. Cocok untuk kolektor sejati."
+  },
+  {
+    "id": "p2",
+    "name": "Kayu Gaharu Pilihan",
+    "category": "Kayu",
+    "price": 900000,
+    "unit": "kg",
+    "stock": 12,
+    "img": "img/p2.jpg",
+    "desc": "Kualitas terjamin dengan aroma elegan khas Nusantara."
+  },
+  {
+    "id": "p3",
+    "name": "Minyak Gaharu 10ml",
+    "category": "Minyak",
+    "price": 450000,
+    "unit": "botol",
+    "stock": 20,
+    "img": "img/p3.jpg",
+    "desc": "Distilasi murni 100% asli, aroma pekat menenangkan."
+  },
+  {
+    "id": "p4",
+    "name": "Minyak Gaharu 30ml",
+    "category": "Minyak",
+    "price": 1200000,
+    "unit": "botol",
+    "stock": 8,
+    "img": "img/p4.jpg",
+    "desc": "Volume lebih besar untuk penggunaan pribadi & koleksi aroma terbaik."
+  },
+  {
+    "id": "p5",
+    "name": "Tasbih Gaharu Handmade",
+    "category": "Aksesoris",
+    "price": 350000,
+    "unit": "pcs",
+    "stock": 15,
+    "img": "img/p5.jpg",
+    "desc": "Tasbih premium dari kayu gaharu pilihan asli, dikerjakan tangan."
+  },
+  {
+    "id": "p6",
+    "name": "Dupa Gaharu Pack",
+    "category": "Aksesoris",
+    "price": 120000,
+    "unit": "pack",
+    "stock": 30,
+    "img": "img/p6.jpg",
+    "desc": "Dupa berkualitas tinggi dari serbuk gaharu asli untuk suasana tenang."
+  },
+  {
+    "id": "p7",
+    "name": "Gaharu Chips (250g)",
+    "category": "Kayu",
+    "price": 250000,
+    "unit": "pack",
+    "stock": 22,
+    "img": "img/p7.jpg",
+    "desc": "Potongan kayu gaharu asli terpilih untuk dibakar atau disuling."
+  },
+  {
+    "id": "p8",
+    "name": "Box Kolektor Eksklusif",
+    "category": "Aksesoris",
+    "price": 950000,
+    "unit": "pcs",
+    "stock": 6,
+    "img": "img/p8.jpg",
+    "desc": "Kotak penyimpanan mewah dan elegan untuk koleksi gaharu Anda."
+  },
+  {
+    "id": "p9",
+    "name": "Gaharu Powder 100g",
+    "category": "Kayu",
+    "price": 180000,
+    "unit": "pack",
+    "stock": 18,
+    "img": "img/p9.jpg",
+    "desc": "Serbuk gaharu murni kualitas terbaik untuk aromaterapi atau dupa."
+  },
+  {
+    "id": "p10",
+    "name": "Sample Kit (5 jenis)",
+    "category": "Minyak",
+    "price": 220000,
+    "unit": "set",
+    "stock": 25,
+    "img": "img/p10.jpg",
+    "desc": "Coba 5 varian aroma minyak gaharu asli pilihan kami."
+  }
+]

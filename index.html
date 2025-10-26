@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AMU GAHARU — Wangi Warisan Nusantara</title> <meta name="description" content="Gaharu Asli Nusantara Pilihan Kolektor. Aroma Khas & Langka. Kualitas Terjamin. Pesan Cepat via WhatsApp."> <meta property="og:title" content="AMU GAHARU — Wangi Warisan Nusantara">
+  <meta property="og:description" content="Gaharu Asli Nusantara Pilihan Kolektor. Kualitas Terjamin. Pesan Cepat via WhatsApp.">
+  <meta property="og:image" content="img/og-image.jpg">
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="icon" href="img/logo1.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script type="application/ld+json" id="productSchema">
+  {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": "AMU GAHARU - Kayu Gaharu Super",
+    "image": "img/p1.jpg",
+    "description": "Serat padat pilihan, aroma kuat & langka. Cocok untuk kolektor sejati.",
+    "brand": {
+      "@type": "Brand",
+      "name": "AMU GAHARU"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": "https://<YOUR-DOMAIN-HERE>", // Ganti dengan URL Anda
+      "priceCurrency": "IDR",
+      "price": "1500000",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <div id="loader">
+    <div style="text-align:center">
+      <div class="logo-anim">AMU GAHARU</div>
+      <div class="ghost" style="color:var(--muted); margin-top:8px">Mewujudkan aroma warisan nusantara...</div>
+    </div>
+  </div>
+
+  <header>
+    <div class="container nav">
+      <div class="header-left-placeholder" style="width: 150px;"></div>
+      <div class="brand centered-brand">
+        <h1>AMU GAHARU</h1>
+        <div class="ghost" style="font-size:12px; text-align: center;">Kayu Gaharu Premium • Asli Nusantara</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" id="openCartBtn" title="Keranjang Belanja">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <a class="cta btn" id="orderNowTop" href="#" onclick="openWhatsAppQuick(event)">Pesan via WhatsApp</a>
+        <button class="btn btn-outline icon-btn" id="menuBtn" title="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="menuOverlay">
+    <button class="icon-btn close-btn" id="closeMenuBtn" title="Tutup Menu">&times;</button>
+    <nav class="overlay-nav">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#categories">Kategori</a></li>
+        <li><a href="#products">Katalog</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Kontak</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <main class="container" id="home">
+
+    <section class="hero reveal">
+      <canvas id="smokeCanvas"></canvas> <div class="hero-left">
+        <span class="kicker">Kualitas Premium Sejak 1989</span> <h2>Bukan Sekadar Wangi.<br>Ini Warisan.</h2>
+        <p id="heroSubheadline">
+          {/* Teks diisi oleh JS Typewriter */}
+          <span class="typewriter-cursor">|</span> {/* Kursor awal */}
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#products">Jelajahi Koleksi Premium</a> <a class="btn btn-outline" href="#contact">Tentang Kami</a>
+        </div>
+      </div>
+      <div>
+        <div class="featured-card">
+          <div class="img"><img src="img/p1.jpg" alt="Featured Gaharu"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <div>
+              <h4 style="margin:0">Kayu Gaharu Super</h4>
+              <div class="ghost">Aroma Khas Kolektor</div>
+            </div>
+            <div class="price">Rp 1.500.000</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="categories" class="section reveal">
+      <div class="section-header">
+        <h3>Jelajahi Koleksi Kami</h3>
+        <div class="ghost" style="font-size:13px">Temukan keharuman asli Nusantara</div>
+      </div>
+      <div class="category-portal">
+        <div class="category-card">
+          <div class="category-card-img"><img loading="lazy" src="img/cat-kayu.jpg" alt="Kayu"></div>
+          <h4>Koleksi Kayu</h4>
+        </div>
+        <div class="category-card">
+          <div class="category-card-img"><img loading="lazy" src="img/cat-minyak.jpg" alt="Minyak"></div>
+          <h4>Koleksi Minyak</h4>
+        </div>
+        <div class="category-card">
+          <div class="category-card-img"><img loading="lazy" src="img/cat-aksesoris.jpg" alt="Aksesoris"></div>
+          <h4>Koleksi Aksesoris</h4>
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="section reveal">
+      <div class="section-header">
+        <h3>Katalog Produk Premium</h3>
+        <div class="ghost" style="font-size:13px">Pilihan terbaik dari hutan berkelanjutan</div>
+      </div>
+      <div class="filter-controls">
+        <div class="filter-pills" id="filterPills">
+          <button class="active" data-category="all">Semua</button>
+          <button data-category="Kayu">Kayu</button>
+          <button data-category="Minyak">Minyak</button>
+          <button data-category="Aksesoris">Aksesoris</button>
+        </div>
+        <div class="filter-right" style="display:flex; gap:10px; align-items:center">
+          <input id="searchInput" placeholder="Cari produk..." oninput="renderProducts()" type="text" style="width:200px">
+          <select id="sortBy" onchange="renderProducts()">
+            <option value="popular">Urutkan: Terlaris</option>
+            <option value="price-asc">Harga: Rendah → Tinggi</option>
+            <option value="price-desc">Harga: Tinggi → Rendah</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid" id="productGrid">
+        <div class="ghost" id="productLoader">Memuat produk...</div>
+      </div>
+    </section>
+
+    <section id="faq" class="section reveal">
+      <div class="section-header">
+        <h3>FAQ</h3>
+        <div class="ghost">Pertanyaan yang sering diajukan</div>
+      </div>
+      <div class="faq-container" id="faqContainer">
+        </div>
+    </section>
+
+    <section id="gallery" class="section reveal">
+      <h3>Galeri</h3>
+      <div class="ghost">Proses seleksi & kualitas premium kami</div>
+      <div class="grid" style="margin-top:12px">
+        <div class="product"><div class="img"><img loading="lazy" src="img/gallery-1.jpg" alt="galeri"></div></div>
+        <div class="product"><div class="img"><img loading="lazy" src="img/gallery-2.jpg" alt="galeri"></div></div>
+        <div class="product"><div class="img"><img loading="lazy" src="img/gallery-3.jpg" alt="galeri"></div></div>
+      </div>
+    </section>
+
+    <section id="contact" class="section reveal">
+      <div class="section-header">
+        <h3>Tentang & Kontak Kami</h3>
+        <div class="ghost">Dedikasi kami pada keaslian & kualitas Gaharu Nusantara.</div>
+      </div>
+
+      <div class="about-contact-grid">
+        <div class="card">
+          <h4>Asli & Legal</h4>
+          <p class="ghost">Kami hanya memilih gaharu terbaik dari sumber petani lokal terverifikasi & berkelanjutan. Keaslian adalah prioritas utama.</p>
+        </div>
+        <div class="card">
+          <h4>Kualitas Premium</h4>
+          <p class="ghost">Melalui seleksi ketat dan traceability terjamin, kami hadirkan gaharu dengan aroma langka yang tahan lama.</p>
+        </div>
+        <div class="card">
+          <h4>Kemasan Eksklusif</h4>
+          <p class="ghost">Setiap produk dikemas dalam kotak mewah yang dirancang untuk menjaga kualitas aroma dan sempurna sebagai hadiah.</p>
+        </div>
+
+        <div class="card">
+          <h4>Pesan via WhatsApp</h4>
+          <p class="ghost">Konsultasi atau pesan langsung? Klik tombol WA di pojok kanan bawah.</p>
+          <p><strong>Nomor WA:</strong> 085894448143</p>
+        </div>
+        <div class="card card-span-2">
+          <h4>Alamat Galeri (By Appointment)</h4>
+          <p class="ghost">Jl. Petamburan VI No.18, RT.2/RW.5, Petamburan, Kecamatan Tanah Abang, Kota Jakarta Pusat, DKI Jakarta 10260</p>
+          <iframe
+            style="width:100%; height:160px; border-radius:10px; border:0;"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="http://googleusercontent.com/maps/google.com/8">
+          </iframe>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-flex container">
+        <div>
+          <div style="font-weight:800; color:var(--neon-blue); text-shadow:var(--neon-blue-glow);">AMU GAHARU</div>
+          <div class="ghost">Wangi Warisan Nusantara</div>
+        </div>
+        <div class="muted">© AMU GAHARU — Hak Cipta Dilindungi</div>
+      </div>
+    </footer>
+  </main>
+
+  <div class="modal" id="productModal">
+    <div class="inner">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+        <div style="font-weight:800">Detail Produk</div>
+        <button onclick="closeModal('productModal')" class="icon-btn">Tutup</button>
+      </div>
+      <div class="modal-grid">
+        <div id="modalLeft"></div>
+        <div id="modalRight"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="cartModal">
+    <div class="cart-inner">
+      <div class="cart-header">
+        <h3>Keranjang Anda</h3>
+        <button onclick="closeModal('cartModal')" class="icon-btn">Tutup</button>
+      </div>
+      <div class="cart-body" id="cartBody">
+        <div id="cartEmpty" class="ghost" style="display: none;">Keranjang Anda masih kosong.</div>
+      </div>
+      <div class="cart-footer">
+        <div id="cartSummary">
+          <div class="cart-summary-row">
+            <span>Subtotal</span>
+            <span id="summarySubtotal">Rp 0</span>
+          </div>
+          <div class="cart-summary-row">
+            <span>Biaya Kirim (Estimasi)</span>
+            <span id="summaryShipping">Rp 0</span>
+          </div>
+          <div class="cart-summary-row" id="packingFeeRow" style="display:none;">
+             <span>Biaya Packing</span>
+             <span id="summaryPackingFee">Rp 0</span>
+          </div>
+          <div class="cart-summary-row" id="promoDiscountRow" style="display:none; color:var(--accent)">
+            <span>Diskon Promo</span>
+            <span id="summaryDiscount">- Rp 0</span>
+          </div>
+          <div class="cart-summary-row total">
+            <span>Total</span>
+            <span id="summaryTotal">Rp 0</span>
+          </div>
+        </div>
+        <div style="margin-top: 16px;">
+          <label for="orderNote" style="font-size: 14px; color: var(--muted); display: block; margin-bottom: 6px;">Catatan Pesanan (opsional):</label>
+          <textarea id="orderNote" rows="3" placeholder="Contoh: Packing kayu jika memungkinkan..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:16px" onclick="checkoutToWhatsApp()">
+          Lanjut ke WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="promo" id="promoBox" style="opacity:0">
+    <div style="font-weight:800">Promo Weekend</div>
+    <div class="ghost" id="promoText">Diskon 10% sampai Minggu!</div>
+    <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
+      <div id="promoTimer" class="ghost">00:00:00</div>
+      <button onclick="applyPromo()" class="btn btn-primary" style="padding:8px 10px; font-size:13px">Gunakan</button>
+    </div>
+  </div>
+
+  <div class="wa-float">
+    <a id="waFloatBtn" href="#" onclick="openWhatsAppQuick(event)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a9.5 9.5 0 1 0-3.02 6.72L21 22v-3.3A9.47 9.47 0 0 0 21 11.5z" stroke="#081" stroke-width="0" fill="#081"/></svg>
+      Pesan via WA
+    </a>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
