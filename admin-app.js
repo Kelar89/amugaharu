@@ -2,6 +2,7 @@
   AMU GAHARU - admin-app.js
   - Logic for the form-based admin page
   - Load products, populate form, add, edit, delete, export JSON
+  - Penambahan Fitur Image Preview
 */
 'use strict';
 
@@ -28,6 +29,7 @@ const prodUnitInput = document.getElementById('prodUnit');
 const prodStockInput = document.getElementById('prodStock');
 const prodImgInput = document.getElementById('prodImg');
 const prodDescInput = document.getElementById('prodDesc');
+const imgPreviewEl = document.getElementById('imgPreview'); // Image Preview Element
 
 // --- Functions ---
 
@@ -69,13 +71,13 @@ function renderProductList() {
         const item = document.createElement('div');
         item.className = 'product-item';
         item.innerHTML = `
-            <img src="${product.img || 'img/placeholder.jpg'}" alt="${product.name}" onerror="this.src='img/placeholder.jpg'"> {/* Placeholder if image fails */}
+            <img src="${product.img || 'img/placeholder.jpg'}" alt="${product.name}" onerror="this.onerror=null; this.src='img/placeholder.jpg';"> {/* Placeholder if image fails */}
             <div class="product-item-details">
                 <h3>${product.name} <small class="ghost">(${product.id})</small></h3>
                 <p><strong>Kategori:</strong> ${product.category}</p>
-                <p><strong>Harga:</strong> ${formatMoneyAdmin(product.price)} / ${product.unit || 'pcs'}</p>
+                <p><strong>Harga:</strong> ${formatMoneyAdmin(product.price)} ${product.unit ? `/ ${product.unit}` : ''}</p>
                 <p><strong>Stok:</strong> ${product.stock}</p>
-                <p class="ghost">${product.desc || '-'}</p>
+                <p class="ghost description">${product.desc || '-'}</p>
             </div>
             <div class="product-item-actions">
                 <button class="btn btn-edit" onclick="editProduct('${product.id}')">Edit</button>
@@ -85,6 +87,25 @@ function renderProductList() {
         productListEl.appendChild(item);
     });
 }
+
+/** Updates the image preview */
+function updateImagePreview() {
+    const path = prodImgInput.value.trim();
+    if (path) {
+        imgPreviewEl.src = path;
+        imgPreviewEl.style.display = 'block'; // Show preview
+    } else {
+        imgPreviewEl.src = '';
+        imgPreviewEl.style.display = 'none'; // Hide preview if path is empty
+    }
+}
+
+// Error handler for the preview image
+imgPreviewEl.onerror = function() {
+    this.src = 'img/placeholder.jpg'; // Show placeholder on error
+    console.warn("Image preview failed to load:", this.src);
+};
+
 
 /** Populates the form with product data for editing */
 function editProduct(id) {
@@ -103,10 +124,12 @@ function editProduct(id) {
     prodImgInput.value = product.img;
     prodDescInput.value = product.desc || '';
 
+    updateImagePreview(); // Update preview when editing
+
     formTitleEl.textContent = 'Edit Produk';
     saveBtnEl.textContent = 'Simpan Perubahan';
     cancelBtnEl.style.display = 'inline-block'; // Show cancel button
-    productFormEl.scrollIntoView({ behavior: 'smooth' }); // Scroll form into view
+    productFormEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll form into view
 }
 
 /** Handles form submission (Add or Update) */
@@ -124,10 +147,22 @@ function handleFormSubmit(event) {
         desc: prodDescInput.value.trim() || null // Store as null if empty
     };
 
+    // Basic Validation
+    if (!formData.id || !formData.name || !formData.category || !formData.img) {
+        alert("Field dengan tanda * (bintang) wajib diisi.");
+        return;
+    }
     if (isNaN(formData.price) || isNaN(formData.stock) || formData.price < 0 || formData.stock < 0) {
         alert("Harga dan Stok harus berupa angka positif.");
         return;
     }
+     // Check image path format (simple check)
+    if (!formData.img.startsWith('img/') || !/\.(jpg|jpeg|png|webp|gif|ico)$/i.test(formData.img)) {
+       if (!confirm(`Path gambar "${formData.img}" tidak umum (tidak diawali 'img/' atau ekstensi tidak standar). Yakin ingin melanjutkan?`)) {
+          return;
+       }
+    }
+
 
     if (editingProductId) {
         // Update existing product
@@ -140,6 +175,7 @@ function handleFormSubmit(event) {
         // Check if ID already exists
         if (products.some(p => p.id === formData.id)) {
             alert(`ID Produk "${formData.id}" sudah digunakan. Harap gunakan ID unik.`);
+            prodIdInput.focus(); // Focus on ID input
             return;
         }
         products.push(formData);
@@ -161,11 +197,12 @@ function resetForm() {
     formTitleEl.textContent = 'Tambah Produk Baru';
     saveBtnEl.textContent = 'Tambah Produk';
     cancelBtnEl.style.display = 'none'; // Hide cancel button
+    updateImagePreview(); // Reset preview image
 }
 
 /** Deletes a product */
 function deleteProduct(id) {
-    if (confirm(`Yakin ingin menghapus produk dengan ID "${id}"?`)) {
+    if (confirm(`Yakin ingin menghapus produk "${products.find(p=>p.id===id)?.name || id}"?`)) { // Show name in confirm
         products = products.filter(p => p.id !== id);
         if (editingProductId === id) { // If deleting the product being edited
             resetForm();
@@ -184,7 +221,9 @@ function downloadJson() {
         const a = document.createElement('a');
         a.href = url;
         a.download = 'products.json';
+        document.body.appendChild(a); // Required for Firefox
         a.click();
+        document.body.removeChild(a); // Clean up
         URL.revokeObjectURL(url);
     } catch (e) {
         alert('Gagal membuat file JSON: ' + e.message);
@@ -194,10 +233,17 @@ function downloadJson() {
 /** Copies the generated JSON to clipboard */
 function copyJson() {
     try {
+        if (products.length === 0) {
+            alert('Tidak ada produk untuk disalin.');
+            return;
+        }
         const jsonString = JSON.stringify(products, null, 2); // Pretty print JSON
         navigator.clipboard.writeText(jsonString)
             .then(() => alert('JSON produk berhasil disalin ke clipboard!'))
-            .catch(err => alert('Gagal menyalin JSON: ' + err));
+            .catch(err => {
+                console.error('Copy JSON error:', err);
+                alert('Gagal menyalin JSON: ' + err + '\n\nMungkin browser Anda tidak mendukung fitur ini atau izin tidak diberikan.');
+             });
     } catch (e) {
         alert('Gagal membuat JSON: ' + e.message);
     }
@@ -214,6 +260,7 @@ productFormEl.addEventListener('submit', handleFormSubmit);
 cancelBtnEl.addEventListener('click', resetForm);
 downloadBtnEl.addEventListener('click', downloadJson);
 copyBtnEl.addEventListener('click', copyJson);
+prodImgInput.addEventListener('input', updateImagePreview); // Listener for image preview
 
 // --- Initial Load ---
 document.addEventListener('DOMContentLoaded', loadProducts);

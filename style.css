@@ -4,6 +4,7 @@
   - Styling Form Data Pelanggan
   - Penambahan Neon Glow Header
   - Penambahan Staggered Animation Delay
+  - Tambah :active state untuk tombol
 */
 
 /* Reset & base */
@@ -155,8 +156,12 @@ header{
 }
 
 /* Tombol */
-.btn{padding:12px 16px; border-radius:12px; font-weight:700; text-decoration:none; display:inline-flex; gap:10px; align-items:center; cursor:pointer; border:1px solid transparent; transition: all 0.3s ease}
+.btn{padding:12px 16px; border-radius:12px; font-weight:700; text-decoration:none; display:inline-flex; gap:10px; align-items:center; cursor:pointer; border:1px solid transparent; transition: all 0.2s ease} /* Dibuat lebih cepat */
 .btn:hover{opacity:0.9; transform: translateY(-2px)}
+.btn:active { /* Efek klik */
+  transform: scale(0.98) translateY(1px);
+  opacity: 0.95;
+}
 .btn-primary{background:linear-gradient(90deg,var(--accent), #b98c3f); color:#0b0b0b}
 .btn-primary:hover {
   box-shadow: 0 4px 20px rgba(197, 155, 75, 0.2);
@@ -249,6 +254,10 @@ header{
 /* Icon Buttons */
 .icon-btn{background:rgba(255,255,255,0.03); border-radius:10px; padding:10px 12px; border:1px solid rgba(255,255,255,0.02); cursor:pointer; color: var(--muted); transition: all 0.2s ease;}
 .icon-btn:hover{background:rgba(255,255,255,0.08); color: #fff;}
+.icon-btn:active {
+  transform: scale(0.95);
+  background: rgba(255,255,255,0.1);
+}
 
 .icon-btn-primary {
   background: rgba(197, 155, 75, 0.12);
@@ -260,6 +269,10 @@ header{
   color: #0b0b0b;
   transform: scale(1.05);
   border-color: var(--accent);
+}
+.icon-btn-primary:active {
+  transform: scale(1);
+  background: rgba(197, 155, 75, 0.8);
 }
 
 /* Filter Pills & Controls */
@@ -276,6 +289,10 @@ header{
   background:linear-gradient(90deg,var(--accent), #b98c3f); color:#0b0b0b;
   border-color:transparent;
 }
+.filter-pills button:active { /* Efek klik */
+  transform: scale(0.96);
+}
+
 /* Dropdown Styles */
 select {
   background: var(--glass) !important;
@@ -320,11 +337,12 @@ select option {
 .cart-item-meta h4 { margin: 0 0 4px; font-size: 15px; }
 .cart-item-meta .price { font-size: 14px; }
 .cart-qty { display: flex; align-items: center; gap: 8px; }
-.qty-btn { background: var(--glass) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 6px; width: 32px; height: 32px; color: #fff !important; cursor: pointer; font-size: 16px; line-height: 1; padding: 0; appearance: none; -webkit-appearance: none; }
+.qty-btn { background: var(--glass) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 6px; width: 32px; height: 32px; color: #fff !important; cursor: pointer; font-size: 16px; line-height: 1; padding: 0; appearance: none; -webkit-appearance: none; transition: all 0.1s ease;} /* Tambah transisi */
 .qty-btn:hover { background: rgba(255,255,255,0.1) !important; }
-.qty-btn:active { background: rgba(255,255,255,0.15) !important; }
+.qty-btn:active { background: rgba(255,255,255,0.15) !important; transform: scale(0.9);} /* Efek klik */
 .cart-item-remove { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 600; margin-left: 8px; padding: 4px; }
 .cart-item-remove:hover { color: #ff8a8a; }
+.cart-item-remove:active { transform: scale(0.9); } /* Efek klik */
 .cart-footer { padding: 22px; background: linear-gradient(180deg, var(--card), #111); border-top: 1px solid var(--glass); }
 .cart-summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
 .cart-summary-row span:first-child { font-weight: 600; color: var(--muted); }
@@ -351,6 +369,7 @@ textarea::placeholder { color: var(--muted); opacity: 0.6; }
 .share-btn.fb { background: #1877F2; color: #fff; }
 .share-btn.tw { background: #1DA1F2; color: #fff; }
 .share-btn:hover { opacity: 0.8; transform: scale(1.05); }
+.share-btn:active { transform: scale(0.98); } /* Efek klik */
 
 /* Minimalist Footer Styles */
 footer.minimalist-footer {
@@ -474,6 +493,12 @@ input,
   font-size:14px;
   font-family: Inter, system-ui;
   width: 100%; /* Make form elements full width */
+  transition: border-color 0.2s ease; /* Transisi untuk focus */
+}
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent); /* Highlight saat focus */
 }
 #customerDataForm textarea {
   height: auto; /* Allow textarea to resize */
@@ -562,13 +587,13 @@ textarea::placeholder{color:var(--muted); opacity:0.6}
   margin: 0 auto;
 }
 .story-content .story-title {
-  font-family: 'Playfair Display', serif; 
-  font-size: 28px; 
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
   margin-bottom: 15px;
 }
 .story-content .story-text {
-  font-size: 16px; 
-  color: var(--muted); 
+  font-size: 16px;
+  color: var(--muted);
   line-height: 1.7;
 }
 
@@ -580,7 +605,7 @@ textarea::placeholder{color:var(--muted); opacity:0.6}
   margin-top: 24px;
 }
 .testimonial-card h4 {
-  margin: 10px 0 0; 
+  margin: 10px 0 0;
   color: var(--accent);
   font-family: Inter, system-ui;
   font-size: 14px;

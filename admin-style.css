@@ -1,6 +1,8 @@
 /*
   AMU GAHARU - admin-style.css
   - Stylesheet for the form-based admin page
+  - Penambahan Style Image Preview
+  - Perbaikan UI Minor (Spacing, Hover, Tombol)
 */
 
 :root {
@@ -34,7 +36,7 @@ h1, h2 {
   font-family: 'Playfair Display', serif;
   color: var(--accent-color);
   margin-top: 0;
-  margin-bottom: 1em;
+  margin-bottom: 0.8em; /* Sedikit lebih kecil */
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.5em;
 }
@@ -81,13 +83,18 @@ h1, h2 {
   display: flex;
   gap: 15px;
   align-items: flex-start;
+  transition: background-color 0.2s ease; /* Hover effect */
+}
+.product-item:hover {
+  background-color: rgba(255, 255, 255, 0.03); /* Subtle hover */
 }
 .product-item img {
-  width: 60px;
-  height: 60px;
+  width: 70px; /* Slightly larger image */
+  height: 70px;
   object-fit: cover;
   border-radius: 4px;
   border: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 .product-item-details {
   flex-grow: 1;
@@ -98,19 +105,28 @@ h1, h2 {
   color: var(--text-color);
 }
 .product-item-details p {
-  margin: 2px 0;
+  margin: 3px 0; /* Slightly more space */
   font-size: 0.9em;
   color: var(--muted-color);
+}
+.product-item-details .description { /* Limit description lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
 }
 .product-item-actions {
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex-shrink: 0;
+  margin-top: 5px; /* Align buttons better */
 }
 .product-item-actions button {
-  padding: 5px 8px;
-  font-size: 0.8em;
+  padding: 6px 10px; /* Slightly larger buttons */
+  font-size: 0.85em;
 }
 
 /* Form Section */
@@ -130,6 +146,7 @@ h1, h2 {
 }
 #productForm input[type="text"],
 #productForm input[type="number"],
+#productForm input[type="tel"], /* Style for tel */
 #productForm textarea {
   width: 100%;
   background: var(--input-bg);
@@ -139,9 +156,16 @@ h1, h2 {
   color: var(--text-color);
   font-size: 1em;
   font-family: inherit;
+  transition: border-color 0.2s ease; /* Focus transition */
+}
+#productForm input:focus,
+#productForm textarea:focus {
+  outline: none;
+  border-color: var(--accent-color); /* Highlight on focus */
 }
 #productForm textarea {
   resize: vertical;
+  min-height: 80px; /* Minimum height */
 }
 #productForm small {
   display: block;
@@ -152,7 +176,7 @@ h1, h2 {
 }
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Adjust min width */
   gap: 15px;
 }
 .form-actions {
@@ -161,25 +185,33 @@ h1, h2 {
   gap: 10px;
 }
 
+/* Image Preview Style */
+#imgPreview {
+  display: block; /* Ensure it takes its own line */
+  max-width: 150px; /* Limit preview size */
+  height: auto;
+  margin-top: 10px; /* Space above preview */
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg); /* Match input background */
+}
+
 /* Buttons */
-button {
-  padding: 10px 15px;
+button, .btn { /* General button class */
+  padding: 10px 18px; /* Slightly more padding */
   border-radius: var(--radius);
   border: none;
   cursor: pointer;
   font-weight: 600;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease; /* Faster click feedback */
+  font-size: 0.95em;
 }
-button:hover {
+button:hover, .btn:hover {
   opacity: 0.85;
 }
-.btn { /* General button class */
-  padding: 10px 15px;
-  border-radius: var(--radius);
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: opacity 0.2s ease;
+button:active, .btn:active {
+  transform: scale(0.98); /* Click effect */
+  opacity: 1;
 }
 .btn-save {
   background: var(--success-color);
@@ -200,6 +232,7 @@ button:hover {
 .btn-download {
   background: var(--accent-color);
   color: #111;
+  font-weight: bold;
 }
 .btn-copy {
   background: #777;
@@ -218,9 +251,10 @@ button:hover {
 .note ol {
   padding-left: 20px;
   margin-top: 10px;
+  margin-bottom: 0;
 }
 .note li {
-  margin-bottom: 5px;
+  margin-bottom: 8px; /* More space */
 }
 .note strong {
   color: var(--text-color);
@@ -245,6 +279,7 @@ button:hover {
   }
   .form-section {
     position: static; /* Remove sticky on mobile */
+    margin-top: 30px; /* Add space when stacked */
   }
   #productList {
     max-height: none; /* Remove height limit */
@@ -271,11 +306,26 @@ button:hover {
   .product-item img {
     width: 100%;
     height: 150px; /* Adjust height */
+    margin-bottom: 10px;
   }
   .product-item-actions {
     flex-direction: row; /* Buttons side-by-side */
+    justify-content: flex-end; /* Align to right */
+    margin-top: 10px;
   }
   .form-grid {
       grid-template-columns: 1fr; /* Stack grid items */
+  }
+  #imgPreview {
+      max-width: 100%; /* Full width preview on small screens */
+  }
+  .export-buttons {
+    flex-direction: column; /* Stack export buttons */
+    align-items: stretch;
+  }
+  .export-buttons .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center; /* Center button text/icon */
   }
 }
