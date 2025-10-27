@@ -2,8 +2,10 @@
 
 /*
   AMU GAHARU - app.js
-  - Versi 4.3.1 (Fix Komentar Bocor)
-  - [FIX] Menghapus komentar kode yang bocor di renderProducts.
+  - Versi 5.1.2 (Minimalist Header + Mega Menu Dropdown - Fix Comments)
+  - Implementasi logika buka/tutup mega menu.
+  - Penyesuaian event listener.
+  - Fix SyntaxError pada perhitungan headerOffset di attachEvents.
 */
 
 /***** Configuration *****/
@@ -49,12 +51,13 @@ async function init(){
     renderProducts();
   } catch (error) {
     console.error(error);
-    document.getElementById('productGrid').innerHTML = `<div class="ghost" style="color: #ff8a8a;">Gagal memuat data produk. Pastikan file 'products.json' ada.</div>`;
+    const productGrid = document.getElementById('productGrid');
+     if(productGrid) productGrid.innerHTML = `<div class="ghost" style="color: #ff8a8a;">Gagal memuat data produk. Pastikan file 'products.json' ada.</div>`;
   }
 
   updateCartUI();
   attachEvents();
-  attachMenuEvents();
+  attachMegaMenuEvents(); // Event listener untuk Mega Menu
   checkPromo();
   initFaq();
   initScrollAnimations();
@@ -66,9 +69,10 @@ async function init(){
   setTimeout(()=>document.getElementById('loader').style.display='none', 500);
 }
 
-// [FIXED] Menghapus komentar yang bocor dari template innerHTML
 function renderProducts(){
-  const grid = document.getElementById('productGrid'); grid.innerHTML='';
+  const grid = document.getElementById('productGrid');
+  if (!grid) return;
+  grid.innerHTML='';
   const q = document.getElementById('searchInput').value.toLowerCase();
   const cat = document.querySelector('#filterPills button.active').dataset.category;
   const sort = document.getElementById('sortBy').value;
@@ -85,7 +89,6 @@ function renderProducts(){
 
   list.forEach(p=>{
     const div = document.createElement('div'); div.className='product reveal';
-    // Perhatikan baris di bawah ini, komentarnya sudah dihapus total
     div.innerHTML = `
       <div class='badge'>${p.category}</div>
       <div class='img'><img src='${p.img}' alt='${p.name}' loading='lazy'></div>
@@ -137,6 +140,7 @@ function openWhatsAppProduct(id) {
 function openProductModal(id){
   const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
   const left = document.getElementById('modalLeft'); const right = document.getElementById('modalRight');
+  if(!left || !right) return;
   left.innerHTML = `<div style='border-radius:12px;overflow:hidden'><img src='${p.img}' alt='${p.name}' style='width:100%; height:100%; object-fit:cover'></div>`;
 
   const shareURL = encodeURIComponent(window.location.href + '#product-' + p.id);
@@ -148,7 +152,7 @@ function openProductModal(id){
     <div style='margin-top:12px; font-weight:800; color:var(--accent); font-size:20px'>${formatMoney(p.price)}</div>
     <div style='margin-top:12px; display:flex; gap:8px; align-items:center'>
       <input id='modalQtyInput' type='number' min='1' value='1' style='width:80px; padding:8px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04)'>
-      <button class='btn btn-primary' onclick='addToCart("${p.id}", parseInt(document.getElementById("modalQtyInput").value||1)); closeModal("productModal");'>Tambah ke Keranjang</button>
+      <button class='btn btn-primary' onclick='addToCart("${p.id}", parseInt(document.getElementById("modalQtyInput")?.value||1)); closeModal("productModal");'>Tambah ke Keranjang</button>
     </div>
     <div class="share-buttons">
       <a class="share-btn wa" href="https://api.whatsapp.com/send?text=${shareText}%20${shareURL}" target="_blank">
@@ -169,10 +173,17 @@ function openProductModal(id){
 }
 
 function openModal(id) {
-  document.getElementById(id).classList.add('open');
+  const megaMenu = document.getElementById('megaMenu');
+  if (megaMenu) megaMenu.classList.remove('open');
+
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.add('open');
 }
 
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function closeModal(id){
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('open');
+}
 
 /***** Full Cart Logic *****/
 function addToCart(id, qty = 1){
@@ -217,20 +228,22 @@ function updateCartQuantity(id, newQty) {
 function updateCartUI() {
   renderMiniCart();
   calculateTotals();
-  document.getElementById('cartCount').innerText = CART.reduce((s,i)=>s+i.qty,0);
+  const cartCountHeader = document.getElementById('cartCount');
+  if (cartCountHeader) cartCountHeader.innerText = CART.reduce((s,i)=>s+i.qty,0);
 }
 
 function renderMiniCart() {
     const cartBody = document.getElementById('cartBody');
     const cartEmpty = document.getElementById('cartEmpty');
+    if(!cartBody || !cartEmpty) return;
 
     const itemsToRemove = Array.from(cartBody.children).filter(child => child !== cartEmpty);
     itemsToRemove.forEach(child => cartBody.removeChild(child));
 
     if (CART.length === 0) {
-        if (cartEmpty) cartEmpty.style.display = 'block';
+        cartEmpty.style.display = 'block';
     } else {
-        if (cartEmpty) cartEmpty.style.display = 'none';
+        cartEmpty.style.display = 'none';
         CART.forEach(item => {
             const div = document.createElement('div');
             div.className = 'cart-item';
@@ -247,11 +260,7 @@ function renderMiniCart() {
                 </div>
                 <button class='cart-item-remove' onclick='updateCartQuantity("${item.id}", 0)'>Hapus</button>
             `;
-            if (cartEmpty) {
-                cartBody.insertBefore(div, cartEmpty);
-            } else {
-                cartBody.appendChild(div);
-            }
+            cartBody.insertBefore(div, cartEmpty);
         });
     }
 }
@@ -278,29 +287,35 @@ function calculateTotals() {
   let discount = 0;
   const packingFeeRow = document.getElementById('packingFeeRow');
   const summaryPackingFee = document.getElementById('summaryPackingFee');
+  const promoDiscountRow = document.getElementById('promoDiscountRow');
+  const summaryDiscount = document.getElementById('summaryDiscount');
 
 
   if(APPLIED_PROMO) {
     discount = subtotal * (CONFIG.promo.weekendDiscountPercent / 100);
-    document.getElementById('promoDiscountRow').style.display = 'flex';
-    document.getElementById('summaryDiscount').innerText = '- ' + formatMoney(discount);
+    if(promoDiscountRow) promoDiscountRow.style.display = 'flex';
+    if(summaryDiscount) summaryDiscount.innerText = '- ' + formatMoney(discount);
   } else {
-    document.getElementById('promoDiscountRow').style.display = 'none';
+    if(promoDiscountRow) promoDiscountRow.style.display = 'none';
   }
 
    if (packingFee > 0) {
-      packingFeeRow.style.display = 'flex';
-      summaryPackingFee.innerText = formatMoney(packingFee);
+      if(packingFeeRow) packingFeeRow.style.display = 'flex';
+      if(summaryPackingFee) summaryPackingFee.innerText = formatMoney(packingFee);
   } else {
-      packingFeeRow.style.display = 'none';
+      if(packingFeeRow) packingFeeRow.style.display = 'none';
   }
 
 
   const total = subtotal + shippingCost + packingFee - discount;
 
-  document.getElementById('summarySubtotal').innerText = formatMoney(subtotal);
-  document.getElementById('summaryShipping').innerText = (shippingMethod === 'gosend' || shippingMethod === 'grabexpress') ? 'Sesuai Aplikasi' : formatMoney(shippingCost);
-  document.getElementById('summaryTotal').innerText = formatMoney(total);
+  const summarySubtotalEl = document.getElementById('summarySubtotal');
+  const summaryShippingEl = document.getElementById('summaryShipping');
+  const summaryTotalEl = document.getElementById('summaryTotal');
+
+  if(summarySubtotalEl) summarySubtotalEl.innerText = formatMoney(subtotal);
+  if(summaryShippingEl) summaryShippingEl.innerText = (shippingMethod === 'gosend' || shippingMethod === 'grabexpress') ? 'Sesuai Aplikasi' : formatMoney(shippingCost);
+  if(summaryTotalEl) summaryTotalEl.innerText = formatMoney(total);
 
 }
 
@@ -352,8 +367,6 @@ function checkoutToWhatsApp() {
     const product = PRODUCTS.find(p => p.id === item.id);
     lines.push(`*${item.name}*`);
     lines.push(`  - Jumlah: ${item.qty} x ${formatMoney(item.price)}`);
-    // Example only - Adapt if you add variants to products.json
-    // if (product && product.variants) { lines.push(`  - *Varian:*`); /* ... */ }
     if (item.note) { lines.push(`  - Catatan Item: ${item.note}`); }
     if (index < CART.length - 1) { lines.push(`---`); }
     subtotal += item.price * item.qty;
@@ -404,17 +417,35 @@ function isWeekendPromo(){
   return (day===5||day===6||day===0);
 }
 function checkPromo(){
-  if(isWeekendPromo()){
-    document.getElementById('promoBox').style.opacity='1';
-    startPromoTimer();
-  }
+    const promoBox = document.getElementById('promoBox');
+    if(!promoBox) return;
+
+    if(isWeekendPromo()){
+        promoBox.style.opacity='1';
+        startPromoTimer();
+    } else {
+        promoBox.style.display = 'none';
+    }
 }
 function startPromoTimer(){
+  const timerEl = document.getElementById('promoTimer');
+  if(!timerEl) return;
+
   const now = new Date(); const end = new Date(now);
   const day = now.getDay(); const daysToSun = (7 - day) % 7; end.setDate(now.getDate() + daysToSun); end.setHours(23,59,59,999);
-  const timerEl = document.getElementById('promoTimer');
+
   const id = setInterval(()=>{
-    const diff = end - new Date(); if(diff<=0){ timerEl.innerText='00:00:00'; clearInterval(id); document.getElementById('promoBox').style.display='none'; APPLIED_PROMO=false; localStorage.setItem('amugaharu_promo', JSON.stringify(APPLIED_PROMO)); updateCartUI(); return }
+    const diff = end - new Date();
+    if(diff<=0){
+        timerEl.innerText='00:00:00';
+        clearInterval(id);
+        const promoBox = document.getElementById('promoBox');
+        if (promoBox) promoBox.style.display='none';
+        APPLIED_PROMO=false;
+        localStorage.setItem('amugaharu_promo', JSON.stringify(APPLIED_PROMO));
+        updateCartUI();
+        return;
+    }
     const h = String(Math.floor(diff/3600000)).padStart(2,'0'); const m = String(Math.floor(diff%3600000/60000)).padStart(2,'0'); const s = String(Math.floor(diff%60000/1000)).padStart(2,'0');
     timerEl.innerText = `${h}:${m}:${s}`;
   },1000);
@@ -424,7 +455,8 @@ function applyPromo(){
   localStorage.setItem('amugaharu_promo', JSON.stringify(true));
   alert('Promo diterapkan di keranjang (diskon '+CONFIG.promo.weekendDiscountPercent+'%)');
   updateCartUI();
-  document.getElementById('promoBox').classList.add('hidden');
+  const promoBox = document.getElementById('promoBox');
+  if (promoBox) promoBox.classList.add('hidden');
   gaTrack('apply_promo', { promo_id: 'WEEKEND_10' });
 }
 
@@ -432,13 +464,14 @@ function applyPromo(){
 /***** FAQ Accordion Logic *****/
 const FAQS = [
   { q: 'Apakah gaharu ini asli?', a: 'Ya, kami menjamin 100% keaslian gaharu dari sumber terverifikasi. Setiap produk premium disertai sertifikat.' },
-  { q: 'Bagaimana cara membedakan gaharu asli?', a: 'Gaharu asli memiliki aroma yang khas, tidak menyengat, dan tahan lama. Serat kayunya padat dan tenggelam di air (untuk kualitas super).' },
+  { q: 'Bagaimana cara membedakan gaharu asli?', a: 'Gaharu asli memiliki aroma yang khas, tidak menyengat, dan tahan lama. Serat kayunya padat dan tenggam di air (untuk kualitas super).' },
   { q: 'Berapa lama pengiriman?', a: 'Estimasi pengiriman 2-4 hari kerja untuk Jabodetabek dan 4-7 hari kerja untuk luar pulau, tergantung jasa kirim yang dipilih.' },
   { q: 'Apakah kemasannya aman?', a: 'Sangat aman. Kami menggunakan kemasan eksklusif yang kokoh dan dilapisi bubble wrap tebal untuk memastikan produk tiba dengan selamat.' }
 ];
 
 function initFaq() {
   const container = document.getElementById('faqContainer');
+  if (!container) return;
   container.innerHTML = '';
   FAQS.forEach(faq => {
     const item = document.createElement('div');
@@ -470,27 +503,39 @@ function initScrollAnimations() {
   });
 }
 
-/***** Menu Overlay Logic *****/
-function attachMenuEvents() {
-  const menuBtn = document.getElementById('menuBtn');
-  const closeMenuBtn = document.getElementById('closeMenuBtn');
-  const menuOverlay = document.getElementById('menuOverlay');
-  const overlayLinks = document.querySelectorAll('#menuOverlay .overlay-nav a');
+/***** Mega Menu Logic *****/
+function attachMegaMenuEvents() {
+    const menuBtn = document.getElementById('megaMenuBtn');
+    const megaMenu = document.getElementById('megaMenu');
+    const megaMenuLinks = document.querySelectorAll('#megaMenu a');
 
-  menuBtn.addEventListener('click', () => {
-    menuOverlay.classList.add('open');
-  });
+    if (menuBtn && megaMenu) {
+        menuBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            megaMenu.classList.toggle('open');
+        });
 
-  closeMenuBtn.addEventListener('click', () => {
-    menuOverlay.classList.remove('open');
-  });
+        window.addEventListener('click', (event) => {
+            if (!menuBtn.contains(event.target) && !megaMenu.contains(event.target)) {
+                megaMenu.classList.remove('open');
+            }
+        });
 
-  overlayLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      menuOverlay.classList.remove('open');
-    });
-  });
+        megaMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                megaMenu.classList.remove('open');
+                const category = link.dataset.categoryFilter;
+                if (category) {
+                    setTimeout(() => filterByCategory(category), 50);
+                }
+            });
+        });
+
+    } else {
+        console.warn("Elemen mega menu (tombol atau panel) tidak ditemukan.");
+    }
 }
+
 
 /***** Typewriter Effect Logic *****/
 function startTypewriter() {
@@ -503,8 +548,11 @@ function startTypewriter() {
     const typingSpeed = 100;
     const deletingSpeed = 50;
     const delayBetweenTexts = 2000;
+    let timeoutId = null;
 
     function type() {
+        if (!document.getElementById('heroSubheadline')) return;
+
         const currentText = CONFIG.typewriterTexts[textIndex];
         let displayText = '';
 
@@ -529,8 +577,9 @@ function startTypewriter() {
             typeSpeed = 500;
         }
 
-        setTimeout(type, typeSpeed);
+        timeoutId = setTimeout(type, typeSpeed);
     }
+    if (timeoutId) clearTimeout(timeoutId);
     setTimeout(type, 500);
 }
 
@@ -540,15 +589,31 @@ function initSmokeEffect() {
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
+  if (!ctx) { console.error("Canvas context not available."); return; }
+
+   let resizeTimeout;
+   const handleResize = () => {
+       if (canvas.clientWidth > 0 && canvas.clientHeight > 0) {
+           canvas.width = canvas.clientWidth;
+           canvas.height = canvas.clientHeight;
+           createParticles();
+       } else {
+           console.warn("Canvas dimensions are zero, skipping resize.");
+       }
+   };
+   window.addEventListener('resize', () => {
+       clearTimeout(resizeTimeout);
+       resizeTimeout = setTimeout(handleResize, 250);
+   });
+   setTimeout(handleResize, 200);
+
 
   let particles = [];
   const particleCount = 50;
 
   function Particle() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + Math.random() * 100;
+    this.x = Math.random() * (canvas.width || 300);
+    this.y = (canvas.height || 300) + Math.random() * 100;
     this.vx = (Math.random() - 0.5) * 0.3;
     this.vy = -(Math.random() * 1.5 + 0.5);
     this.radius = Math.random() * 40 + 25;
@@ -560,12 +625,20 @@ function initSmokeEffect() {
 
   function createParticles() {
     particles = [];
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle());
+     if (canvas.offsetParent !== null && canvas.width > 0) {
+        for (let i = 0; i < particleCount; i++) {
+          particles.push(new Particle());
+        }
     }
   }
 
+  let animationFrameId = null;
   function animate() {
+    if (canvas.offsetParent === null || !ctx) {
+        animationFrameId = requestAnimationFrame(animate);
+        return;
+    }
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     particles.forEach((p, index) => {
@@ -575,11 +648,12 @@ function initSmokeEffect() {
 
       if (p.y < -p.radius || p.life > p.maxLife) {
         particles[index] = new Particle();
-        p = particles[index];
       } else {
          p.alpha = p.initialAlpha * (1 - p.life / p.maxLife);
          p.alpha = Math.max(0, p.alpha);
       }
+
+      if (isNaN(p.alpha) || p.alpha < 0) p.alpha = 0;
 
       let gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
       gradient.addColorStop(0, `rgba(197, 155, 75, ${p.alpha * 0.4})`);
@@ -592,38 +666,48 @@ function initSmokeEffect() {
       ctx.fill();
     });
 
-    requestAnimationFrame(animate);
+    animationFrameId = requestAnimationFrame(animate);
   }
 
-  createParticles();
-  animate();
+  document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+          if (animationFrameId) cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+      } else {
+          if (canvas && canvas.offsetParent !== null && !animationFrameId) {
+              animate();
+          }
+      }
+  });
 
-   let resizeTimeout;
-   window.addEventListener('resize', () => {
-       clearTimeout(resizeTimeout);
-       resizeTimeout = setTimeout(() => {
-           if (canvas.clientWidth > 0 && canvas.clientHeight > 0) {
-               canvas.width = canvas.clientWidth;
-               canvas.height = canvas.clientHeight;
-               createParticles();
-           }
-       }, 250);
-   });
+
+  createParticles();
+  if (!animationFrameId) {
+      animate();
+  }
 }
 
 
 /***** Init listeners *****/
 function attachEvents(){
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') { closeModal('productModal'); closeModal('cartModal'); document.getElementById('menuOverlay').classList.remove('open'); } });
+    const megaMenu = document.getElementById('megaMenu');
+    document.addEventListener('keydown', (e)=>{
+        if(e.key==='Escape') {
+            closeModal('productModal');
+            closeModal('cartModal');
+            if (megaMenu) megaMenu.classList.remove('open');
+        }
+    });
 
+  // Smooth scroll for ALL # links
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click', function(e){
-    if (!a.closest('.overlay-nav')) {
-      e.preventDefault();
-    }
+    e.preventDefault();
     const tgt = this.getAttribute('href'); if(tgt==='#') return;
     const targetElement = document.querySelector(tgt);
     if (targetElement) {
-        const headerOffset = 70;
+        const headerElement = document.querySelector('header');
+        // [FIX] Gunakan getComputedStyle untuk mendapatkan tinggi aktual header
+        const headerOffset = headerElement ? parseFloat(getComputedStyle(headerElement).height) : 70;
         const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -645,14 +729,25 @@ function attachEvents(){
     });
   });
 
-  document.getElementById('openCartBtn').addEventListener('click', () => openModal('cartModal'));
+  const openCartButton = document.getElementById('openCartBtn');
+  if (openCartButton) {
+      openCartButton.addEventListener('click', () => openModal('cartModal'));
+  }
 
-  document.getElementById('productModal').addEventListener('click', (e) => {
-    if(e.target.id === 'productModal') closeModal('productModal');
-  });
-  document.getElementById('cartModal').addEventListener('click', (e) => {
-    if(e.target.id === 'cartModal') closeModal('cartModal');
-  });
+
+  const productModal = document.getElementById('productModal');
+  if (productModal) {
+      productModal.addEventListener('click', (e) => {
+        if(e.target.id === 'productModal') closeModal('productModal');
+      });
+  }
+
+  const cartModal = document.getElementById('cartModal');
+  if (cartModal) {
+      cartModal.addEventListener('click', (e) => {
+        if(e.target.id === 'cartModal') closeModal('cartModal');
+      });
+  }
 }
 
 // DOM ready

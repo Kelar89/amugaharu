@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AMU GAHARU — Wangi Warisan Nusantara</title> <meta name="description" content="Gaharu Asli Nusantara Pilihan Kolektor. Aroma Khas & Langka. Kualitas Terjamin. Pesan Cepat via WhatsApp."> <meta property="og:title" content="AMU GAHARU — Wangi Warisan Nusantara">
+  <title>AMU GAHARU — Wangi Warisan Nusantara</title>
+  <meta name="description" content="Gaharu Asli Nusantara Pilihan Kolektor. Aroma Khas & Langka. Kualitas Terjamin. Pesan Cepat via WhatsApp.">
+  <meta property="og:title" content="AMU GAHARU — Wangi Warisan Nusantara">
   <meta property="og:description" content="Gaharu Asli Nusantara Pilihan Kolektor. Kualitas Terjamin. Pesan Cepat via WhatsApp.">
   <meta property="og:image" content="img/og-image.jpg">
   <meta name="theme-color" content="#0b0b0b">
@@ -44,50 +46,68 @@
 
   <header>
     <div class="container nav">
-      <div class="header-left-placeholder" style="width: 150px;"></div>
-      <div class="brand centered-brand">
-        <h1>AMU GAHARU</h1>
-        <div class="ghost" style="font-size:12px; text-align: center;">Kayu Gaharu Premium • Asli Nusantara</div>
-      </div>
+      <a href="#home" class="brand-link">
+        <div class="brand">
+          <img src="img/logo1.ico" alt="Logo AMU GAHARU" class="logo-img-header">
+          <h1 class="header-brand-text">AMU GAHARU</h1>
+        </div>
+      </a>
+
       <div class="header-actions">
-        <button class="btn btn-outline" id="openCartBtn" title="Keranjang Belanja">
+        <button class="btn btn-outline cart-btn" id="openCartBtn" title="Keranjang Belanja">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
           <span class="cart-count" id="cartCount">0</span>
         </button>
         <a class="cta btn" id="orderNowTop" href="#" onclick="openWhatsAppQuick(event)">Pesan via WhatsApp</a>
-        <button class="btn btn-outline icon-btn" id="menuBtn" title="Menu">
+        <button class="btn btn-outline icon-btn menu-toggle" id="megaMenuBtn" title="Menu">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
           </svg>
-        </button>
+       </button>
       </div>
+    </div>
+
+    <div id="megaMenu">
+       <div class="container mega-menu-content">
+          <nav class="mega-menu-nav">
+             <ul>
+               <li><a href="#home">Home</a></li>
+               <li><a href="#categories">Kategori</a></li>
+               <li><a href="#products">Katalog Lengkap</a></li>
+               <li><a href="#faq">FAQ</a></li>
+               <li><a href="#contact">Kontak & Tentang</a></li>
+             </ul>
+          </nav>
+          <div class="mega-menu-categories">
+             <a href="#categories" class="mega-category-item" data-category-filter="Kayu">
+                <img src="img/cat-kayu.jpg" alt="Koleksi Kayu">
+                <span>Koleksi Kayu</span>
+             </a>
+             <a href="#categories" class="mega-category-item" data-category-filter="Minyak">
+                <img src="img/cat-minyak.jpg" alt="Koleksi Minyak">
+                <span>Koleksi Minyak</span>
+             </a>
+             <a href="#categories" class="mega-category-item" data-category-filter="Aksesoris">
+                <img src="img/cat-aksesoris.jpg" alt="Koleksi Aksesoris">
+                <span>Koleksi Aksesoris</span>
+             </a>
+          </div>
+       </div>
     </div>
   </header>
 
-  <div id="menuOverlay">
-    <button class="icon-btn close-btn" id="closeMenuBtn" title="Tutup Menu">&times;</button>
-    <nav class="overlay-nav">
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#categories">Kategori</a></li>
-        <li><a href="#products">Katalog</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><a href="#contact">Kontak</a></li>
-      </ul>
-    </nav>
-  </div>
-
   <main class="container" id="home">
-
     <section class="hero reveal">
-      <canvas id="smokeCanvas"></canvas> <div class="hero-left">
-        <span class="kicker">Kualitas Premium Sejak 1989</span> <h2>Bukan Sekadar Wangi.<br>Ini Warisan.</h2>
+      <canvas id="smokeCanvas"></canvas>
+      <div class="hero-left">
+        <span class="kicker">Kualitas Premium Sejak 2024</span>
+        <h2>Bukan Sekadar Wangi.<br>Ini Warisan.</h2>
         <p id="heroSubheadline">
-          {/* Teks diisi oleh JS Typewriter */}
-          <span class="typewriter-cursor">|</span> {/* Kursor awal */}
+          <span class="typewriter-cursor">|</span>
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#products">Jelajahi Koleksi Premium</a> <a class="btn btn-outline" href="#contact">Tentang Kami</a>
+          <a class="btn btn-primary" href="#products">Jelajahi Koleksi Premium</a>
+          <a class="btn btn-outline" href="#contact">Tentang Kami</a>
         </div>
       </div>
       <div>
@@ -110,15 +130,15 @@
         <div class="ghost" style="font-size:13px">Temukan keharuman asli Nusantara</div>
       </div>
       <div class="category-portal">
-        <div class="category-card">
+        <div class="category-card" onclick="filterByCategory('Kayu')">
           <div class="category-card-img"><img loading="lazy" src="img/cat-kayu.jpg" alt="Kayu"></div>
           <h4>Koleksi Kayu</h4>
         </div>
-        <div class="category-card">
+        <div class="category-card" onclick="filterByCategory('Minyak')">
           <div class="category-card-img"><img loading="lazy" src="img/cat-minyak.jpg" alt="Minyak"></div>
           <h4>Koleksi Minyak</h4>
         </div>
-        <div class="category-card">
+        <div class="category-card" onclick="filterByCategory('Aksesoris')">
           <div class="category-card-img"><img loading="lazy" src="img/cat-aksesoris.jpg" alt="Aksesoris"></div>
           <h4>Koleksi Aksesoris</h4>
         </div>
@@ -203,19 +223,24 @@
             loading="lazy"
             allowfullscreen
             referrerpolicy="no-referrer-when-downgrade"
-            src="http://googleusercontent.com/maps/google.com/8">
+            src="http://googleusercontent.com/maps/google.com/15">
           </iframe>
         </div>
       </div>
     </section>
 
-    <footer>
-      <div class="footer-flex container">
-        <div>
-          <div style="font-weight:800; color:var(--neon-blue); text-shadow:var(--neon-blue-glow);">AMU GAHARU</div>
-          <div class="ghost">Wangi Warisan Nusantara</div>
-        </div>
-        <div class="muted">© AMU GAHARU — Hak Cipta Dilindungi</div>
+    <footer class="minimalist-footer">
+      <div class="container">
+         <div class="brand footer-brand">
+           <h1 class="footer-brand-text">AMU GAHARU</h1>
+         </div>
+         <div class="social-icons">
+           <a href="#" title="Instagram">[IG]</a>
+           <a href="#" title="Facebook">[FB]</a>
+           <a href="#" title="TikTok">[TT]</a>
+           <a href="#" onclick="openWhatsAppQuick(event)" title="WhatsApp">[WA]</a>
+         </div>
+         <p class="copyright ghost">© AMU GAHARU — Hak Cipta Dilindungi</p>
       </div>
     </footer>
   </main>
