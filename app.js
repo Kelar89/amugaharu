@@ -2,10 +2,13 @@
 
 /*
   AMU GAHARU - app.js
-  - Versi 5.1.2 (Minimalist Header + Mega Menu Dropdown - Fix Comments)
-  - Implementasi logika buka/tutup mega menu.
-  - Penyesuaian event listener.
-  - Fix SyntaxError pada perhitungan headerOffset di attachEvents.
+  - Versi 5.4.0 (Fase 5: Poles Asetetik)
+  - Penambahan staggered animation logic
+  - Penambahan animasi fade-in/out pada filter produk
+  - Penambahan Notifikasi Toast
+  - Upgrade Modal Detail Produk (Stok, Tombol WA)
+  - Penambahan Modal Checkout Preview
+  - Auto-format pesan WhatsApp & Pengosongan keranjang
 */
 
 /***** Configuration *****/
@@ -27,6 +30,7 @@ const CONFIG = {
 let PRODUCTS = [];
 let CART = JSON.parse(localStorage.getItem('amugaharu_cart')||'[]');
 let APPLIED_PROMO = JSON.parse(localStorage.getItem('amugaharu_promo')||'false');
+let toastTimer; // Timer untuk toast
 
 function formatMoney(v){ return CONFIG.currency + ' ' + v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') }
 
@@ -34,6 +38,24 @@ function openWhatsAppQuick(e){
   if(e) e.preventDefault();
   const text = encodeURIComponent(`Halo admin ${CONFIG.brand}, saya ingin bertanya mengenai produk.`);
   window.open(`https://wa.me/${CONFIG.waNumber}?text=${text}`,'_blank');
+}
+
+/** Menampilkan notifikasi Toast */
+function showToast(message) {
+  const toast = document.getElementById('toastNotification');
+  const msgEl = document.getElementById('toastMessage');
+  if (!toast || !msgEl) return;
+
+  msgEl.textContent = message;
+  toast.classList.add('show');
+
+  // Hapus timer sebelumnya jika ada
+  if (toastTimer) clearTimeout(toastTimer);
+
+  // Sembunyikan toast setelah 3 detik
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
 }
 
 function gaTrack(eventName, params) {
@@ -48,7 +70,7 @@ async function init(){
       throw new Error(`Gagal memuat products.json: ${response.statusText}`);
     }
     PRODUCTS = await response.json();
-    renderProducts();
+    renderProducts(); // Initial render
   } catch (error) {
     console.error(error);
     const productGrid = document.getElementById('productGrid');
@@ -60,7 +82,6 @@ async function init(){
   attachMegaMenuEvents(); // Event listener untuk Mega Menu
   checkPromo();
   initFaq();
-  initScrollAnimations();
   initSmokeEffect();
   startTypewriter();
 
@@ -72,51 +93,62 @@ async function init(){
 function renderProducts(){
   const grid = document.getElementById('productGrid');
   if (!grid) return;
-  grid.innerHTML='';
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const cat = document.querySelector('#filterPills button.active').dataset.category;
-  const sort = document.getElementById('sortBy').value;
 
-  let list = PRODUCTS.filter(p=> p.name.toLowerCase().includes(q) || (p.desc && p.desc.toLowerCase().includes(q)));
-  if(cat!=='all') list = list.filter(p=>p.category===cat);
-  if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
-  if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+  // FASE 4: Mulai FADE OUT
+  grid.style.opacity = '0';
 
-  if (list.length === 0) {
-    grid.innerHTML = `<div class="ghost">Tidak ada produk yang cocok.</div>`;
-    return;
-  }
+  // Beri waktu 300ms (sesuai transisi CSS) sebelum mengganti konten & fade in
+  setTimeout(() => {
+    grid.innerHTML='';
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const cat = document.querySelector('#filterPills button.active').dataset.category;
+    const sort = document.getElementById('sortBy').value;
 
-  list.forEach(p=>{
-    const div = document.createElement('div'); div.className='product reveal';
-    div.innerHTML = `
-      <div class='badge'>${p.category}</div>
-      <div class='img'><img src='${p.img}' alt='${p.name}' loading='lazy'></div>
-      <h3>${p.name}</h3>
-      <div class='ghost'>${p.desc || ''}</div>
-      <div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'>
-        <div>
-          <div class='price'>${formatMoney(p.price)}</div>
-          <div class='ghost' style='font-size:12px'>Stok: ${p.stock}</div>
-        </div>
-        <div class='prod-actions'>
-          <button class='icon-btn' onclick='openWhatsAppProduct("${p.id}")' title="Tanya Produk Ini via WA">
-             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
-               <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.57 6.57 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zm-1.07-5.115c-.083-.41-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/>
-             </svg>
-          </button>
-          <button class='icon-btn' onclick='openProductModal("${p.id}")' title="Lihat Detail">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>
-          </button>
-          <button class='icon-btn icon-btn-primary' onclick='addToCart("${p.id}", 1)' title="Tambah ke Keranjang">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1.5a.5.5 0 0 1 .5.5v5.5H14a.5.5 0 0 1 0 1H8.5V14a.5.5 0 0 1-1 0V8.5H2a.5.5 0 0 1 0-1h5.5V2a.5.5 0 0 1 .5-.5z"/></svg>
-          </button>
-        </div>
-      </div>`;
-    grid.appendChild(div);
-  })
+    let list = PRODUCTS.filter(p=> p.name.toLowerCase().includes(q) || (p.desc && p.desc.toLowerCase().includes(q)));
+    if(cat!=='all') list = list.filter(p=>p.category===cat);
+    if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+    if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
 
-  initScrollAnimations();
+    if (list.length === 0) {
+      grid.innerHTML = `<div class="ghost">Tidak ada produk yang cocok.</div>`;
+    } else {
+      list.forEach(p=>{
+        const div = document.createElement('div'); div.className='product reveal'; // Tetap gunakan 'reveal'
+        div.innerHTML = `
+          <div class='badge'>${p.category}</div>
+          <div class='img'><img src='${p.img}' alt='${p.name}' loading='lazy'></div>
+          <h3>${p.name}</h3>
+          <div class='ghost'>${p.desc || ''}</div>
+          <div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'>
+            <div>
+              <div class='price'>${formatMoney(p.price)}</div>
+              <div class='ghost' style='font-size:12px'>Stok: ${p.stock}</div>
+            </div>
+            <div class='prod-actions'>
+              <button class='icon-btn' onclick='openWhatsAppProduct("${p.id}")' title="Tanya Produk Ini via WA">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
+                   <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.57 6.57 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zm-1.07-5.115c-.083-.41-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/>
+                 </svg>
+              </button>
+              <button class='icon-btn' onclick='openProductModal("${p.id}")' title="Lihat Detail">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>
+              </button>
+              <button class='icon-btn icon-btn-primary' onclick='addToCart("${p.id}", 1)' title="Tambah ke Keranjang">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1.5a.5.5 0 0 1 .5.5v5.5H14a.5.5 0 0 1 0 1H8.5V14a.5.5 0 0 1-1 0V8.5H2a.5.5 0 0 1 0-1h5.5V2a.5.5 0 0 1 .5-.5z"/></svg>
+              </button>
+            </div>
+          </div>`;
+        grid.appendChild(div);
+      });
+    }
+
+    // Panggil initScrollAnimations lagi SETELAH grid diisi
+    initScrollAnimations();
+    
+    // FASE 4: FADE IN
+    grid.style.opacity = '1';
+
+  }, 300); // Durasi harus sama dengan transisi CSS
 }
 
 function filterByCategory(category){
@@ -141,7 +173,7 @@ function openProductModal(id){
   const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
   const left = document.getElementById('modalLeft'); const right = document.getElementById('modalRight');
   if(!left || !right) return;
-  left.innerHTML = `<div style='border-radius:12px;overflow:hidden'><img src='${p.img}' alt='${p.name}' style='width:100%; height:100%; object-fit:cover'></div>`;
+  left.innerHTML = `<div style='border-radius:12px;overflow:hidden'><img src='${p.img}' alt='${p.name}' style='width:100%; height:100%; object-fit:cover' loading='lazy'></div>`;
 
   const shareURL = encodeURIComponent(window.location.href + '#product-' + p.id);
   const shareText = encodeURIComponent(`Cek produk premium ${p.name} dari ${CONFIG.brand}!`);
@@ -149,12 +181,28 @@ function openProductModal(id){
   right.innerHTML = `
     <h2 style='margin-top:0'>${p.name}</h2>
     <div class='ghost'>${p.desc || ''}</div>
-    <div style='margin-top:12px; font-weight:800; color:var(--accent); font-size:20px'>${formatMoney(p.price)}</div>
-    <div style='margin-top:12px; display:flex; gap:8px; align-items:center'>
-      <input id='modalQtyInput' type='number' min='1' value='1' style='width:80px; padding:8px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04)'>
-      <button class='btn btn-primary' onclick='addToCart("${p.id}", parseInt(document.getElementById("modalQtyInput")?.value||1)); closeModal("productModal");'>Tambah ke Keranjang</button>
+    <div style='margin:16px 0 12px; display:flex; justify-content:space-between; align-items:center;'>
+      <div style='font-weight:800; color:var(--accent); font-size:20px'>${formatMoney(p.price)}</div>
+      <div class='ghost' style='font-size:13px; text-align:right;'>Stok: <strong style="color: var(--accent);">${p.stock}</strong> ${p.unit || 'pcs'}</div>
     </div>
-    <div class="share-buttons">
+
+    <div style='margin-top:16px; display:flex; gap:10px; align-items:center'>
+      <label for='modalQtyInput' class='ghost' style='font-size:13px; margin:0;'>Jumlah:</label>
+      <input id='modalQtyInput' type='number' min='1' value='1' style='width:70px; padding: 10px 12px; height: 44px;'>
+    </div>
+    
+    <div class="hero-actions" style="margin-top: 20px; gap: 12px;">
+      <button class='btn btn-primary' onclick='addToCart("${p.id}", parseInt(document.getElementById("modalQtyInput")?.value||1)); closeModal("productModal");'>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        Tambah Keranjang
+      </button>
+      <button class='btn btn-outline' onclick='openWhatsAppProduct("${p.id}")'>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16" style="margin-right: 4px;"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zM9.079 8.39c-.083-.411-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/></svg>
+        Tanya via WA
+      </button>
+    </div>
+
+    <div class="share-buttons" style="margin-top: 20px;">
       <a class="share-btn wa" href="https://api.whatsapp.com/send?text=${shareText}%20${shareURL}" target="_blank">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zM9.079 8.39c-.083-.411-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/></svg>
         Share
@@ -205,7 +253,13 @@ function addToCart(id, qty = 1){
 
   localStorage.setItem('amugaharu_cart', JSON.stringify(CART));
   updateCartUI();
-  openModal('cartModal');
+  
+  // Tampilkan Notifikasi Toast
+  showToast(`✅ ${p.name} ditambahkan ke keranjang`);
+  
+  // Buka modal keranjang (opsional, bisa di-remark jika tidak ingin auto-open)
+  // openModal('cartModal');
+  
   gaTrack('add_to_cart', { product_id: p.id, quantity: qty });
 }
 
@@ -317,10 +371,75 @@ function calculateTotals() {
   if(summaryShippingEl) summaryShippingEl.innerText = (shippingMethod === 'gosend' || shippingMethod === 'grabexpress') ? 'Sesuai Aplikasi' : formatMoney(shippingCost);
   if(summaryTotalEl) summaryTotalEl.innerText = formatMoney(total);
 
+  // Mengembalikan nilai untuk digunakan di modal checkout
+  return { subtotal, shippingCost, packingFee, discount, total, shippingMethod };
 }
 
 
-function checkoutToWhatsApp() {
+/** FUNGSI BARU: Membuka Modal Checkout Preview */
+function openCheckoutModal() {
+  if(CART.length === 0) {
+    alert('Keranjang Anda kosong');
+    return;
+  }
+
+  const summaryListEl = document.getElementById('checkoutSummaryList');
+  const totalSummaryEl = document.getElementById('checkoutTotalSummary');
+  if (!summaryListEl || !totalSummaryEl) {
+    console.error("Elemen modal checkout tidak ditemukan.");
+    return;
+  }
+
+  // 1. Render Item Keranjang
+  summaryListEl.innerHTML = ''; // Kosongkan dulu
+  CART.forEach(item => {
+    const itemTotal = item.price * item.qty;
+    const div = document.createElement('div');
+    div.className = 'checkout-item';
+    div.innerHTML = `
+      <div>
+        <div class="name">${item.name}</div>
+        <div class="qty">${item.qty} ${item.unit || 'pcs'} x ${formatMoney(item.price)}</div>
+      </div>
+      <div class="price">${formatMoney(itemTotal)}</div>
+    `;
+    summaryListEl.appendChild(div);
+  });
+
+  // 2. Render Total
+  const totals = calculateTotals();
+  totalSummaryEl.innerHTML = `
+    <div class="cart-summary-row">
+      <span>Subtotal</span>
+      <span>${formatMoney(totals.subtotal)}</span>
+    </div>
+    <div class="cart-summary-row">
+      <span>Biaya Kirim (Estimasi)</span>
+      <span>${(totals.shippingMethod === 'gosend' || totals.shippingMethod === 'grabexpress') ? 'Sesuai Aplikasi' : formatMoney(totals.shippingCost)}</span>
+    </div>
+    ${totals.packingFee > 0 ? `
+    <div class="cart-summary-row">
+       <span>Biaya Packing</span>
+       <span>${formatMoney(totals.packingFee)}</span>
+    </div>` : ''}
+    ${totals.discount > 0 ? `
+    <div class="cart-summary-row" style="color:var(--accent)">
+      <span>Diskon Promo</span>
+      <span>- ${formatMoney(totals.discount)}</span>
+    </div>` : ''}
+    <div class="cart-summary-row total" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--glass);">
+      <span>Total Estimasi</span>
+      <span>${formatMoney(totals.total)}</span>
+    </div>
+  `;
+
+  // 3. Buka Modal
+  closeModal('cartModal'); // Tutup keranjang mini
+  openModal('checkoutModal'); // Buka modal checkout
+}
+
+/** FUNGSI MODIFIKASI: Mengirim Pesanan ke WA (Sebelumnya checkoutToWhatsApp) */
+function sendWhatsAppCheckout() {
   if(CART.length === 0) {
     alert('Keranjang Anda kosong');
     return;
@@ -328,86 +447,82 @@ function checkoutToWhatsApp() {
 
   const orderNote = document.getElementById('orderNote').value.trim();
 
+  // Data dummy (sesuai file asli)
   const customerName = "Umar";
   const customerPhone = "085894448146";
   const customerAddress = "petmaburan 89, RT 4/RW 6, Kel. per, Kec. asdfs, rwe324 10260";
   const customerPinpoint = "Tidak Dibagikan";
-  const shippingMethod = localStorage.getItem('shippingMethod') || 'internal';
   const paymentMethod = "Transfer BCA";
 
-  let shippingCost = 0;
+  // Ambil kalkulasi final
+  const { subtotal, shippingCost, packingFee, discount, total, shippingMethod } = calculateTotals();
+  
   let estimatedTime = "Sesuai Aplikasi Ojol";
   let shippingCostDisplay = "Sesuai Aplikasi";
 
   if (shippingMethod === 'pickup') {
-      shippingCost = 0;
       estimatedTime = "Siap diambil dalam 30 menit";
       shippingCostDisplay = formatMoney(0);
   } else if (shippingMethod === 'internal') {
-      shippingCost = 15000;
       estimatedTime = "Tiba dalam 45-60 menit";
       shippingCostDisplay = formatMoney(shippingCost);
   }
 
-  const packingFee = (CART.reduce((sum, item) => sum + item.price * item.qty, 0) > 0) ? CONFIG.packingFee : 0;
-
+  // --- MEMBUAT FORMAT PESAN OTOMATIS ---
   let lines = [];
   lines.push(`*Pesan Baru dari Website ${CONFIG.brand}*`);
   lines.push(`===================================`);
-  lines.push(`*Detail Pelanggan:*`);
-  lines.push(`* *Nama:* ${customerName}`);
-  lines.push(`* *No. HP:* ${customerPhone}`);
-  lines.push(`* *Alamat:* ${customerAddress}`);
-  lines.push(`* *Pinpoint Lokasi:* ${customerPinpoint}`);
+  lines.push(`*Detail Pelanggan (Dummy):*`);
+  lines.push(`*Nama:* ${customerName}`);
+  lines.push(`*No. HP:* ${customerPhone}`);
+  lines.push(`*Alamat:* ${customerAddress}`);
   lines.push(`===================================`);
   lines.push(`*Detail Pesanan (Order ID: ${Date.now().toString().slice(-6)}):*`);
 
-  let subtotal = 0;
   CART.forEach((item, index) => {
-    const product = PRODUCTS.find(p => p.id === item.id);
     lines.push(`*${item.name}*`);
-    lines.push(`  - Jumlah: ${item.qty} x ${formatMoney(item.price)}`);
-    if (item.note) { lines.push(`  - Catatan Item: ${item.note}`); }
-    if (index < CART.length - 1) { lines.push(`---`); }
-    subtotal += item.price * item.qty;
+    lines.push(`  - Jumlah: ${item.qty} ${item.unit || 'pcs'} x ${formatMoney(item.price)}`);
   });
+  
+  lines.push(`===================================`);
 
   if (orderNote) {
-    lines.push(`---`);
-    lines.push(`*Catatan Pesanan Keseluruhan:*`);
+    lines.push(`*Catatan Pesanan:*`);
     lines.push(orderNote);
-    lines.push(`---`);
-  } else {
     lines.push(`===================================`);
   }
 
-  lines.push(`*Pengiriman & Pembayaran:*`);
-  lines.push(`* *Metode Pengiriman:* ${shippingMethod.replace(/^\w/, c => c.toUpperCase())}`);
-  lines.push(`* *Estimasi:* ${estimatedTime}`);
-  lines.push(`* *Metode Pembayaran:* ${paymentMethod}`);
-  lines.push(`===================================`);
   lines.push(`*Rincian Pembayaran:*`);
-  lines.push(`* *Subtotal:* ${formatMoney(subtotal)}`);
-  lines.push(`* *Ongkir:* ${shippingCostDisplay}`);
-  if (packingFee > 0) { lines.push(`* *Biaya Packing:* ${formatMoney(packingFee)}`); }
-
-  let discount = 0;
-  if(APPLIED_PROMO) {
-    discount = subtotal * (CONFIG.promo.weekendDiscountPercent / 100);
-    lines.push(`* *Diskon Promo:* -${formatMoney(discount)}`);
-  }
+  lines.push(`*Subtotal:* ${formatMoney(subtotal)}`);
+  lines.push(`*Ongkir (${shippingMethod}):* ${shippingCostDisplay}`);
+  if (packingFee > 0) { lines.push(`*Biaya Packing:* ${formatMoney(packingFee)}`); }
+  if (discount > 0) { lines.push(`*Diskon Promo:* -${formatMoney(discount)}`); }
   lines.push(`-----------------------------------`);
-
-  const total = subtotal + shippingCost + packingFee - discount;
-  lines.push(`* *TOTAL:* *${formatMoney(total)}*`);
+  lines.push(`*TOTAL:* *${formatMoney(total)}*`);
   lines.push(`===================================`);
-  lines.push(`Mohon segera diproses. Terima kasih. 🙏`);
+  lines.push(`Mohon konfirmasi ketersediaan dan total akhir. Terima kasih. 🙏`);
+  // --- SELESAI MEMBUAT FORMAT ---
 
   const text = encodeURIComponent(lines.join('\n'));
   const waLink = `https://wa.me/${CONFIG.waNumber}?text=${text}`;
 
   gaTrack('begin_checkout', { value: total, currency: 'IDR' });
+  
+  // Buka link WhatsApp
   window.open(waLink,'_blank');
+
+  // Kosongkan keranjang setelah berhasil
+  CART = [];
+  localStorage.removeItem('amugaharu_cart');
+  localStorage.removeItem('amugaharu_promo'); // Hapus juga promo
+  APPLIED_PROMO = false;
+  
+  // Update UI dan tutup semua modal
+  updateCartUI();
+  closeModal('checkoutModal');
+  
+  // Tampilkan notifikasi sukses
+  showToast('✅ Pesanan Anda telah diteruskan ke WhatsApp!');
 }
 
 
@@ -465,7 +580,7 @@ function applyPromo(){
 const FAQS = [
   { q: 'Apakah gaharu ini asli?', a: 'Ya, kami menjamin 100% keaslian gaharu dari sumber terverifikasi. Setiap produk premium disertai sertifikat.' },
   { q: 'Bagaimana cara membedakan gaharu asli?', a: 'Gaharu asli memiliki aroma yang khas, tidak menyengat, dan tahan lama. Serat kayunya padat dan tenggam di air (untuk kualitas super).' },
-  { q: 'Berapa lama pengiriman?', a: 'Estimasi pengiriman 2-4 hari kerja untuk Jabodetabek dan 4-7 hari kerja untuk luar pulau, tergantung jasa kirim yang dipilih.' },
+  { q: 'Berapa lama pengiriman?', a: 'Estimasi pengiriman 2-4 hari kerja untuk Jabodetabek dan 4-7 hari kerja untuk luar pulau, tergantung jasa kirim yang dipilih.' }, // <-- SUDAH DIPERBAIKI
   { q: 'Apakah kemasannya aman?', a: 'Sangat aman. Kami menggunakan kemasan eksklusif yang kokoh dan dilapisi bubble wrap tebal untuk memastikan produk tiba dengan selamat.' }
 ];
 
@@ -488,17 +603,29 @@ function initFaq() {
   });
 }
 
-/***** Scroll Animation Logic *****/
+/***** Scroll Animation Logic (FASE 5: Staggered) *****/
 function initScrollAnimations() {
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry, index) => {
       if (entry.isIntersecting) {
+        // Hanya tambahkan delay jika elemennya adalah produk di dalam grid
+        if (entry.target.classList.contains('product') && entry.target.closest('#productGrid')) {
+           // Hitung delay berdasarkan index elemen di antara semua elemen .product.reveal
+           const productElements = Array.from(document.querySelectorAll('#productGrid .product.reveal'));
+           const productIndex = productElements.indexOf(entry.target);
+           const delay = productIndex * 100; // Delay 100ms per item
+           entry.target.style.transitionDelay = `${delay}ms`;
+        } else {
+           entry.target.style.transitionDelay = '0ms'; // Hapus delay untuk elemen reveal lain
+        }
         entry.target.classList.add('active');
       }
     });
   }, { threshold: 0.1 });
 
   document.querySelectorAll('.reveal').forEach(el => {
+    // Reset delay sebelum mengamati lagi (penting saat filter)
+    el.style.transitionDelay = '0ms';
     observer.observe(el);
   });
 }
@@ -695,6 +822,7 @@ function attachEvents(){
         if(e.key==='Escape') {
             closeModal('productModal');
             closeModal('cartModal');
+            closeModal('checkoutModal'); // Tutup modal checkout juga
             if (megaMenu) megaMenu.classList.remove('open');
         }
     });
@@ -735,19 +863,12 @@ function attachEvents(){
   }
 
 
-  const productModal = document.getElementById('productModal');
-  if (productModal) {
-      productModal.addEventListener('click', (e) => {
-        if(e.target.id === 'productModal') closeModal('productModal');
-      });
-  }
-
-  const cartModal = document.getElementById('cartModal');
-  if (cartModal) {
-      cartModal.addEventListener('click', (e) => {
-        if(e.target.id === 'cartModal') closeModal('cartModal');
-      });
-  }
+  // Event listener untuk menutup modal saat klik di backdrop
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if(e.target.id === modal.id) closeModal(modal.id);
+    });
+  });
 }
 
 // DOM ready

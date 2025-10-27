@@ -1,16 +1,13 @@
 /*
   AMU GAHARU - style.css
-  - Versi 5.1.2 (Minimalist Header + Mega Menu Dropdown - Fix Comments)
-  - Style header baru (logo kiri, aksi + burger kanan).
-  - Style mega menu dropdown.
-  - Style footer minimalis baru.
-  - Perbaikan kontras dropdown select.
-  - Hapus sisa style side drawer yang tidak terpakai.
+  - Versi 5.4.0 (Fase 5: Poles Asetetik)
+  - Penambahan Neon Glow Header
+  - Penambahan Staggered Animation Delay
 */
 
 /* Reset & base */
 :root{
-  --bg:#070606; --card:#0f0f0f; --muted:#bdb5a3; --accent:#c59b4b; --glass: rgba(255,255,255,0.03);
+  --bg:#070606; --card:#0f0f0f; --muted:#ccc; --accent:#c59b4b; --glass: rgba(255,255,255,0.03);
   --radius:14px; --container:1100px; --maxw:1200px;
   --neon-blue: #00bfff;
   --neon-blue-glow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 20px #00bfff;
@@ -64,7 +61,8 @@ header{
 }
 .header-brand-text { /* Teks brand di header */
   font-family: 'Playfair Display', serif; margin:0; font-size:18px; letter-spacing:0.6px;
-  color: #eee; /* Warna teks biasa */
+  color: var(--neon-blue); /* Warna teks biasa */
+  text-shadow: var(--neon-blue-glow); /* FASE 5: Tambah Glow */
 }
 .header-actions{display:flex; gap:10px; align-items:center}
 .cart-btn { padding: 8px 10px; }
@@ -228,8 +226,13 @@ header{
 .category-card h4{position:relative; z-index:2; font-family:'Playfair Display',serif; font-size:22px; margin:0}
 
 /* Section: products */
-.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
-.product{background:var(--glass); border-radius:12px; padding:16px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.03); transition: all 0.3s ease;}
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; transition: opacity 0.3s ease-out;}
+.product{background:var(--glass); border-radius:12px; padding:16px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.03);}
+/* FASE 5: Modifikasi Transisi untuk Staggered */
+.product.reveal {
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Durasi lebih pendek */
+  /* transition-delay akan ditambahkan oleh JS */
+}
 .product:hover{
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 10px rgba(197, 155, 75, 0.1);
@@ -243,7 +246,7 @@ header{
 .prod-actions{display:flex; gap:8px; margin-top:10px;}
 
 /* Icon Buttons */
-.icon-btn{background:rgba(255,255,255,0.03); border-radius:10px; padding:8px 10px; border:1px solid rgba(255,255,255,0.02); cursor:pointer; color: var(--muted); transition: all 0.2s ease;}
+.icon-btn{background:rgba(255,255,255,0.03); border-radius:10px; padding:10px 12px; border:1px solid rgba(255,255,255,0.02); cursor:pointer; color: var(--muted); transition: all 0.2s ease;}
 .icon-btn:hover{background:rgba(255,255,255,0.08); color: #fff;}
 
 .icon-btn-primary {
@@ -316,7 +319,7 @@ select option {
 .cart-item-meta h4 { margin: 0 0 4px; font-size: 15px; }
 .cart-item-meta .price { font-size: 14px; }
 .cart-qty { display: flex; align-items: center; gap: 8px; }
-.qty-btn { background: var(--glass) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 6px; width: 28px; height: 28px; color: #fff !important; cursor: pointer; font-size: 16px; line-height: 1; padding: 0; appearance: none; -webkit-appearance: none; }
+.qty-btn { background: var(--glass) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 6px; width: 32px; height: 32px; color: #fff !important; cursor: pointer; font-size: 16px; line-height: 1; padding: 0; appearance: none; -webkit-appearance: none; }
 .qty-btn:hover { background: rgba(255,255,255,0.1) !important; }
 .qty-btn:active { background: rgba(255,255,255,0.15) !important; }
 .cart-item-remove { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 600; margin-left: 8px; padding: 4px; }
@@ -424,7 +427,7 @@ footer.minimalist-footer {
 
 /* Responsive */
 @media (max-width:980px){
-  .grid, .category-portal {grid-template-columns:repeat(2,1fr)}
+  .grid, .category-portal, .testimonial-grid {grid-template-columns:repeat(2,1fr)}
   .hero{grid-template-columns:1fr}
   .modal-grid{grid-template-columns:1fr}
   .about-contact-grid { grid-template-columns: repeat(2, 1fr); }
@@ -433,12 +436,12 @@ footer.minimalist-footer {
 }
 @media (max-width:640px){
   .hero h2{font-size:28px}
-  .grid, .category-portal {grid-template-columns:1fr}
+  .grid, .category-portal, .testimonial-grid {grid-template-columns:1fr}
   .header-brand-text { font-size: 16px; }
   .logo-img-header { height: 32px; width: 32px; }
 
   .header-actions .cta { font-size: 11px; padding: 8px 10px; white-space: nowrap; }
-  .menu-toggle { padding: 8px; }
+  .menu-toggle { padding: 10px; }
 
   .filter-controls { flex-direction: column; align-items: stretch; }
   .filter-pills { justify-content: center; }
@@ -487,3 +490,88 @@ input::placeholder{color:var(--muted); opacity:0.6}
 /* loader */
 #loader{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#050505 0%, rgba(5,5,5,0.6) 60%); z-index:9999}
 .logo-anim{font-family:'Playfair Display',serif; font-size:28px; color:var(--accent); letter-spacing:1px}
+
+
+/* --- PENAMBAHAN FASE 3 --- */
+
+/* Toast Notification */
+#toastNotification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 100px); /* Mulai dari bawah layar */
+  background: linear-gradient(90deg, var(--accent), #b98c3f);
+  color: #0b0b0b;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 3000;
+  opacity: 0;
+  transition: all 0.4s ease-out;
+  pointer-events: none;
+  box-shadow: 0 5px 20px rgba(197, 155, 75, 0.2);
+}
+#toastNotification.show {
+  opacity: 1;
+  transform: translate(-50%, 0); /* Muncul ke posisi */
+}
+
+/* Checkout Modal Summary List */
+.checkout-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--glass);
+}
+.checkout-item:last-child {
+  border-bottom: none;
+}
+.checkout-item .name {
+  color: #fff;
+  font-weight: 600;
+}
+.checkout-item .qty {
+  color: var(--muted);
+  font-size: 13px;
+  margin-left: 15px;
+}
+.checkout-item .price {
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* --- PENAMBAHAN FASE 4 --- */
+
+/* Storytelling Section */
+.story-content {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.story-content .story-title {
+  font-family: 'Playfair Display', serif; 
+  font-size: 28px; 
+  margin-bottom: 15px;
+}
+.story-content .story-text {
+  font-size: 16px; 
+  color: var(--muted); 
+  line-height: 1.7;
+}
+
+/* Testimonial Section */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 24px;
+}
+.testimonial-card h4 {
+  margin: 10px 0 0; 
+  color: var(--accent);
+  font-family: Inter, system-ui;
+  font-size: 14px;
+}
