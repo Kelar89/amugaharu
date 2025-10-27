@@ -326,7 +326,7 @@
           <textarea id="orderNote" rows="3" placeholder="Contoh: Packing kayu jika memungkinkan..."></textarea>
         </div>
         <button class="btn btn-primary" style="width:100%; margin-top:16px" onclick="openCheckoutModal()">
-          Lanjut ke WhatsApp
+          Lanjut ke Konfirmasi
         </button>
       </div>
     </div>
@@ -355,7 +355,7 @@
         <button onclick="closeModal('checkoutModal')" class="icon-btn">Tutup</button>
       </div>
       <div class="cart-body" id="checkoutBody">
-        <p class="ghost" style="font-size: 13px; margin-top:0;">Harap periksa kembali pesanan Anda sebelum melanjutkan ke WhatsApp.</p>
+        <p class="ghost" style="font-size: 13px; margin-top:0;">Harap periksa kembali pesanan Anda.</p>
         
         <div id="checkoutSummaryList" style="margin-top: 15px;">
           </div>
@@ -363,26 +363,51 @@
         <div id="checkoutTotalSummary" style="margin-top: 20px;">
           </div>
 
-        <div class="ghost" style="margin-top:20px; font-size:13px; background: var(--glass); padding: 10px; border-radius: 8px;">
-          <strong>Info Pelanggan (Dummy):</strong>
-          <ul style="padding-left: 20px; margin-top: 5px; margin-bottom: 0;">
-            <li>Nama: Umar</li>
-            <li>Alamat: petmaburan 89...</li>
-          </ul>
-          <p style="font-size:12px; opacity: 0.7; margin: 5px 0 0;">(Ini adalah data dummy. Anda akan diminta data lengkap oleh Admin via WhatsApp)</p>
-        </div>
       </div>
       <div class="cart-footer">
         <p style="font-size: 13px; color: var(--muted); margin-top: 0;">
-          Klik tombol di bawah untuk mengirim rincian pesanan ini ke Admin kami via WhatsApp.
+          Pesanan sudah benar? Lanjutkan untuk mengisi data pengiriman.
         </p>
-        <button class="btn btn-primary" style="width:100%; margin-top:10px; background: linear-gradient(90deg, #25D366, #128C7E); color: #fff;" onclick="sendWhatsAppCheckout()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zM9.079 8.39c-.083-.411-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/></svg>
-          Kirim Pesanan ke WhatsApp
+        <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="requestCustomerData()">
+          Lanjut Isi Data Pengiriman
         </button>
       </div>
     </div>
   </div>
+
+  <div class="modal" id="customerDataModal">
+    <div class="cart-inner" style="width: 480px;">
+       <div class="cart-header">
+        <h3>Data Pengiriman</h3>
+        <button onclick="closeModal('customerDataModal')" class="icon-btn">Tutup</button>
+      </div>
+      <div class="cart-body">
+         <p class="ghost" style="font-size: 13px; margin-top:0;">Mohon isi data berikut untuk pengiriman.</p>
+         <form id="customerDataForm" style="margin-top: 20px;">
+            <div class="form-group">
+               <label for="customerName">Nama Lengkap*</label>
+               <input type="text" id="customerName" required placeholder="Nama Anda">
+            </div>
+            <div class="form-group">
+               <label for="customerPhone">Nomor WhatsApp Aktif*</label>
+               <input type="tel" id="customerPhone" required placeholder="Contoh: 08123456789">
+            </div>
+            <div class="form-group">
+               <label for="customerAddress">Alamat Lengkap Pengiriman*</label>
+               <textarea id="customerAddress" rows="4" required placeholder="Jalan, Nomor Rumah, RT/RW, Kelurahan, Kecamatan, Kota/Kabupaten, Kode Pos"></textarea>
+               <small class="ghost">Pastikan alamat selengkap mungkin.</small>
+            </div>
+         </form>
+      </div>
+       <div class="cart-footer">
+         <button class="btn btn-primary" style="width:100%; background: linear-gradient(90deg, #25D366, #128C7E); color: #fff;" onclick="sendWhatsAppCheckout()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zM9.079 8.39c-.083-.411-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/></svg>
+          Kirim Pesanan via WhatsApp
+        </button>
+       </div>
+    </div>
+  </div>
+
 
   <div id="toastNotification">
     <span id="toastMessage"></span>

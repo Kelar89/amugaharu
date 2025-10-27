@@ -1,6 +1,7 @@
 /*
   AMU GAHARU - style.css
-  - Versi 5.4.0 (Fase 5: Poles Asetetik)
+  - Versi 5.4.1 (Fix Data Pelanggan)
+  - Styling Form Data Pelanggan
   - Penambahan Neon Glow Header
   - Penambahan Staggered Animation Delay
 */
@@ -461,17 +462,26 @@ footer.minimalist-footer {
 }
 
 /* Small UI bits */
-input{
+input,
+#customerDataForm input, /* Target form inputs */
+#customerDataForm textarea { /* Target form textarea */
   background:var(--glass);
   border:1px solid rgba(255,255,255,0.04);
   padding:12px 14px;
   border-radius:10px;
   color:#eee;
-  height:44px;
+  height:44px; /* Ensure consistent height for inputs */
   font-size:14px;
   font-family: Inter, system-ui;
+  width: 100%; /* Make form elements full width */
 }
-input::placeholder{color:var(--muted); opacity:0.6}
+#customerDataForm textarea {
+  height: auto; /* Allow textarea to resize */
+  min-height: 80px;
+}
+
+input::placeholder,
+textarea::placeholder{color:var(--muted); opacity:0.6}
 
 .ghost{opacity:0.65; font-size:13px}
 
@@ -574,4 +584,20 @@ input::placeholder{color:var(--muted); opacity:0.6}
   color: var(--accent);
   font-family: Inter, system-ui;
   font-size: 14px;
+}
+
+/* --- PENAMBAHAN Styling Form Data Pelanggan --- */
+#customerDataForm .form-group {
+  margin-bottom: 15px; /* Spasi antar field */
+}
+#customerDataForm label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 13px;
+  color: var(--muted);
+}
+#customerDataForm small {
+ display: block;
+ margin-top: 4px;
+ font-size: 12px;
 }
