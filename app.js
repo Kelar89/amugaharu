@@ -2,13 +2,15 @@
 
 /*
   AMU GAHARU - app.js
-  - Versi 5.4.0 (Fase 5: Poles Asetetik)
+  - Versi 5.4.2 (Fix WA Desktop Issue)
+  - Penambahan try...catch dan console.log untuk window.open
   - Penambahan staggered animation logic
   - Penambahan animasi fade-in/out pada filter produk
   - Penambahan Notifikasi Toast
   - Upgrade Modal Detail Produk (Stok, Tombol WA)
-  - Penambahan Modal Checkout Preview
+  - Penambahan Modal Checkout Preview + Form Data Pelanggan
   - Auto-format pesan WhatsApp & Pengosongan keranjang
+  - Perbaikan SyntaxError di FAQS
 */
 
 /***** Configuration *****/
@@ -82,6 +84,7 @@ async function init(){
   attachMegaMenuEvents(); // Event listener untuk Mega Menu
   checkPromo();
   initFaq();
+  // initScrollAnimations dipanggil di dalam renderProducts setelah grid diisi
   initSmokeEffect();
   startTypewriter();
 
@@ -438,6 +441,12 @@ function openCheckoutModal() {
   openModal('checkoutModal'); // Buka modal checkout
 }
 
+/** FUNGSI BARU: Meminta data pelanggan */
+function requestCustomerData() {
+  closeModal('checkoutModal');
+  openModal('customerDataModal');
+}
+
 /** FUNGSI MODIFIKASI: Mengirim Pesanan ke WA (Sebelumnya checkoutToWhatsApp) */
 function sendWhatsAppCheckout() {
   if(CART.length === 0) {
@@ -445,14 +454,22 @@ function sendWhatsAppCheckout() {
     return;
   }
 
-  const orderNote = document.getElementById('orderNote').value.trim();
+  // Ambil data dari form
+  const customerNameInput = document.getElementById('customerName');
+  const customerPhoneInput = document.getElementById('customerPhone');
+  const customerAddressInput = document.getElementById('customerAddress');
 
-  // Data dummy (sesuai file asli)
-  const customerName = "Umar";
-  const customerPhone = "085894448146";
-  const customerAddress = "petmaburan 89, RT 4/RW 6, Kel. per, Kec. asdfs, rwe324 10260";
-  const customerPinpoint = "Tidak Dibagikan";
-  const paymentMethod = "Transfer BCA";
+  const customerName = customerNameInput.value.trim();
+  const customerPhone = customerPhoneInput.value.trim();
+  const customerAddress = customerAddressInput.value.trim();
+
+  // Validasi sederhana
+  if (!customerName || !customerPhone || !customerAddress) {
+    alert('Mohon lengkapi semua data pengiriman (Nama, No. WhatsApp, Alamat).');
+    return;
+  }
+
+  const orderNote = document.getElementById('orderNote').value.trim();
 
   // Ambil kalkulasi final
   const { subtotal, shippingCost, packingFee, discount, total, shippingMethod } = calculateTotals();
@@ -468,11 +485,11 @@ function sendWhatsAppCheckout() {
       shippingCostDisplay = formatMoney(shippingCost);
   }
 
-  // --- MEMBUAT FORMAT PESAN OTOMATIS ---
+  // --- MEMBUAT FORMAT PESAN OTOMATIS DENGAN DATA ASLI ---
   let lines = [];
   lines.push(`*Pesan Baru dari Website ${CONFIG.brand}*`);
   lines.push(`===================================`);
-  lines.push(`*Detail Pelanggan (Dummy):*`);
+  lines.push(`*Detail Pelanggan:*`); // Ganti dari Dummy
   lines.push(`*Nama:* ${customerName}`);
   lines.push(`*No. HP:* ${customerPhone}`);
   lines.push(`*Alamat:* ${customerAddress}`);
@@ -506,23 +523,42 @@ function sendWhatsAppCheckout() {
   const text = encodeURIComponent(lines.join('\n'));
   const waLink = `https://wa.me/${CONFIG.waNumber}?text=${text}`;
 
-  gaTrack('begin_checkout', { value: total, currency: 'IDR' });
+  // --- PERBAIKAN: Tambah logging dan try...catch ---
+  console.log("Generated WhatsApp Link:", waLink); // Log link untuk debug
+  gaTrack('begin_checkout', { value: total, currency: 'IDR', customer_name: customerName }); 
   
-  // Buka link WhatsApp
-  window.open(waLink,'_blank');
+  try {
+    const win = window.open(waLink, '_blank');
+    if (win) {
+        // Berhasil membuka tab/window baru
+        win.focus();
 
-  // Kosongkan keranjang setelah berhasil
-  CART = [];
-  localStorage.removeItem('amugaharu_cart');
-  localStorage.removeItem('amugaharu_promo'); // Hapus juga promo
-  APPLIED_PROMO = false;
-  
-  // Update UI dan tutup semua modal
-  updateCartUI();
-  closeModal('checkoutModal');
-  
-  // Tampilkan notifikasi sukses
-  showToast('✅ Pesanan Anda telah diteruskan ke WhatsApp!');
+        // Kosongkan keranjang setelah berhasil
+        CART = [];
+        localStorage.removeItem('amugaharu_cart');
+        localStorage.removeItem('amugaharu_promo'); // Hapus juga promo
+        APPLIED_PROMO = false;
+        
+        // Update UI dan tutup semua modal
+        updateCartUI();
+        closeModal('customerDataModal'); // Tutup modal data customer
+        
+        // Kosongkan form setelah submit
+        document.getElementById('customerDataForm').reset();
+        
+        // Tampilkan notifikasi sukses
+        showToast('✅ Pesanan Anda telah diteruskan ke WhatsApp!');
+
+    } else {
+        // Window.open diblokir atau gagal
+        throw new Error('Gagal membuka jendela baru. Kemungkinan diblokir oleh browser.');
+    }
+  } catch (error) {
+      console.error("Gagal membuka WhatsApp:", error);
+      alert('Gagal membuka WhatsApp secara otomatis.\n\nMohon periksa apakah browser Anda memblokir pop-up.\n\nAnda bisa menyalin detail pesanan dari console (Tekan F12 -> Console) atau mencoba lagi.');
+      // Opsional: Tampilkan link di console agar bisa disalin manual
+      console.log("Salin link ini secara manual jika perlu:", waLink);
+  }
 }
 
 
@@ -822,7 +858,8 @@ function attachEvents(){
         if(e.key==='Escape') {
             closeModal('productModal');
             closeModal('cartModal');
-            closeModal('checkoutModal'); // Tutup modal checkout juga
+            closeModal('checkoutModal');
+            closeModal('customerDataModal'); // Tutup modal data customer juga
             if (megaMenu) megaMenu.classList.remove('open');
         }
     });
@@ -873,3 +910,15 @@ function attachEvents(){
 
 // DOM ready
 document.addEventListener('DOMContentLoaded', init);
+// --- PENAMBAHAN FASE 5: Registrasi Service Worker ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker registered successfully with scope: ', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed: ', error);
+      });
+  });
+}
