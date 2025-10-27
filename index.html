@@ -7,19 +7,21 @@
   <meta name="description" content="Gaharu Asli Nusantara Pilihan Kolektor. Aroma Khas & Langka. Kualitas Terjamin. Pesan Cepat via WhatsApp.">
   <meta property="og:title" content="AMU GAHARU — Wangi Warisan Nusantara">
   <meta property="og:description" content="Gaharu Asli Nusantara Pilihan Kolektor. Kualitas Terjamin. Pesan Cepat via WhatsApp.">
-  <meta property="og:image" content="img/og-image.jpg">
-  <meta name="theme-color" content="#0b0b0b">
+  <meta property="og:image" content="img/og-image.jpg"> <meta name="theme-color" content="#0b0b0b">
   <link rel="icon" href="img/logo1.ico" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="preload" href="img/p1.jpg" as="image"> <link rel="preload" href="products.json" as="fetch" crossorigin="anonymous"> <link rel="stylesheet" href="style.css">
 
   <script type="application/ld+json" id="productSchema">
   {
     "@context": "https://schema.org/",
     "@type": "Product",
     "name": "AMU GAHARU - Kayu Gaharu Super",
-    "image": "img/p1.jpg",
+    "image": "img/p1.jpg", // Pastikan path ini benar dan absolut jika memungkinkan
     "description": "Serat padat pilihan, aroma kuat & langka. Cocok untuk kolektor sejati.",
     "brand": {
       "@type": "Brand",
@@ -27,10 +29,10 @@
     },
     "offers": {
       "@type": "Offer",
-      "url": "https://<YOUR-DOMAIN-HERE>", // Ganti dengan URL Anda
+      "url": "https://<YOUR-GITHUB-USERNAME>.github.io/<YOUR-REPO-NAME>/", // Ganti dengan URL Website Anda
       "priceCurrency": "IDR",
       "price": "1500000",
-      "availability": "https://schema.org/InStock"
+      "availability": "https://schema.org/InStock" // Atau OutOfStock, PreOrder
     }
   }
   </script>
@@ -126,10 +128,9 @@
 
     <section class="section reveal" id="story">
       <div class="story-content">
-        <h2 class="story-title">Dari Akar Hutan. Untuk Jiwa Anda.</h2>
+        <h2 class="story-title">Intisari Hutan. Kekayaan Nusantara.</h2>
         <p class="story-text">
-          "Setiap potongan gaharu kami adalah perjalanan wangi yang tak tergantikan. 
-          Bukan sekadar aroma, ini adalah warisan ketenangan dari bumi Nusantara."
+          Di AMU GAHARU, kami percaya setiap serat kayu menyimpan cerita. Dari hutan lestari Nusantara, kami hadirkan gaharu asli pilihan—bukan sekadar aroma, tapi pengalaman warisan budaya yang menenangkan jiwa. Temukan ketenangan sejati dalam setiap hirupannya.
         </p>
       </div>
     </section>
@@ -192,21 +193,21 @@
 
     <section id="testimonials" class="section reveal">
       <div class="section-header" style="text-align: center;">
-        <h3>Dipercaya Para Kolektor</h3>
-        <div class="ghost">Apa kata mereka tentang AMU GAHARU</div>
+        <h3>Suara Pelanggan Setia</h3>
+        <div class="ghost">Pengalaman mereka bersama AMU GAHARU</div>
       </div>
       <div class="testimonial-grid">
         <div class="card testimonial-card">
-          <p class="ghost" style="font-style: italic; margin-top: 0;">"Aromanya luar biasa, mengingatkan pada koleksi lama. Kualitas supernya benar-benar tenggelam. Sangat direkomendasikan."</p>
-          <h4 style="margin: 10px 0 0; color: var(--accent);">— R. Suteja, Kolektor</h4>
+          <p class="ghost" style="font-style: italic; margin-top: 0;">"Sudah lama mencari kualitas seperti ini. Kayu gaharu supernya benar-benar otentik, aroma dalamnya kuat dan menenangkan. AMU GAHARU jadi standar baru saya."</p>
+          <h4 style="margin: 10px 0 0; color: var(--accent);">— Bapak H. Prawiro, Kolektor Senior</h4>
         </div>
         <div class="card testimonial-card">
-          <p class="ghost" style="font-style: italic; margin-top: 0;">"Minyak gaharu murninya terbaik. Wanginya pekat, tahan lama, dan sangat menenangkan untuk meditasi. Pasti pesan lagi."</p>
-          <h4 style="margin: 10px 0 0; color: var(--accent);">— A. Wijaya, Praktisi</h4>
+          <p class="ghost" style="font-style: italic; margin-top: 0;">"Minyak Gaharu 10ml-nya luar biasa murni. Sedikit saja sudah cukup untuk ruangan, aromanya bertahan lama. Cocok untuk relaksasi setelah seharian bekerja."</p>
+          <h4 style="margin: 10px 0 0; color: var(--accent);">— Ibu Larasati, Terapis Aroma</h4>
         </div>
         <div class="card testimonial-card">
-          <p class="ghost" style="font-style: italic; margin-top: 0;">"Pelayanan cepat, packing sangat aman dan mewah. Cocok untuk hadiah. Terima kasih AMU GAHARU."</p>
-          <h4 style="margin: 10px 0 0; color: var(--accent);">— B. Hasan, Pengusaha</h4>
+          <p class="ghost" style="font-style: italic; margin-top: 0;">"Respon admin cepat dan ramah. Pengiriman juga tepat waktu dengan packing yang sangat rapi dan aman. Saya sangat puas dengan pelayanannya."</p>
+          <h4 style="margin: 10px 0 0; color: var(--accent);">— Andi S., Pembeli Online</h4>
         </div>
       </div>
     </section>
@@ -244,18 +245,16 @@
         <div class="card">
           <h4>Pesan via WhatsApp</h4>
           <p class="ghost">Konsultasi atau pesan langsung? Klik tombol WA di pojok kanan bawah.</p>
-          <p><strong>Nomor WA:</strong> 085894448143</p>
-        </div>
+          <p><strong>Nomor WA:</strong> 085894448143</p> </div>
         <div class="card card-span-2">
           <h4>Alamat Galeri (By Appointment)</h4>
-          <p class="ghost">Jl. Petamburan VI No.18, RT.2/RW.5, Petamburan, Kecamatan Tanah Abang, Kota Jakarta Pusat, DKI Jakarta 10260</p>
+          <p class="ghost">JL. Petamburan VI No.18, RT.2/RW.5, Petamburan, Kecamatan Tanah Abang, Kota Jakarta Pusat, DKI Jakarta 10260</p>
           <iframe
             style="width:100%; height:160px; border-radius:10px; border:0;"
             loading="lazy"
             allowfullscreen
             referrerpolicy="no-referrer-when-downgrade"
-            src="http://googleusercontent.com/maps/google.com/15">
-          </iframe>
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.666421976212!2d106.81177631476916!3d-6.175392995530758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f6e4a9d7b3cf%3A0x8e8a6c4a8d4a9f9c!2sJl.%20Petamburan%20VI%20No.18%2C%20RT.2%2FRW.5%2C%20Petamburan%2C%20Kecamatan%20Tanah%20Abang%2C%20Kota%20Jakarta%20Pusat%2C%20Daerah%20Khusus%20Ibukota%20Jakarta%2010260!5e0!3m2!1sen!2sid!4v1667817011921!5m2!1sen!2sid"> </iframe>
         </div>
       </div>
     </section>
@@ -383,28 +382,26 @@
       </div>
       <div class="cart-body">
          <p class="ghost" style="font-size: 13px; margin-top:0;">Mohon isi data berikut untuk pengiriman.</p>
-         <form id="customerDataForm" style="margin-top: 20px;">
-            <div class="form-group">
+         <form id="customerDataForm" style="margin-top: 20px;" onsubmit="event.preventDefault(); sendWhatsAppCheckout();"> <div class="form-group">
                <label for="customerName">Nama Lengkap*</label>
                <input type="text" id="customerName" required placeholder="Nama Anda">
             </div>
             <div class="form-group">
                <label for="customerPhone">Nomor WhatsApp Aktif*</label>
-               <input type="tel" id="customerPhone" required placeholder="Contoh: 08123456789">
+               <input type="tel" id="customerPhone" required placeholder="Contoh: 08123456789" inputmode="numeric" pattern="^\d{9,15}$"> <small class="ghost">Hanya angka, 9-15 digit.</small>
             </div>
             <div class="form-group">
                <label for="customerAddress">Alamat Lengkap Pengiriman*</label>
                <textarea id="customerAddress" rows="4" required placeholder="Jalan, Nomor Rumah, RT/RW, Kelurahan, Kecamatan, Kota/Kabupaten, Kode Pos"></textarea>
                <small class="ghost">Pastikan alamat selengkap mungkin.</small>
             </div>
+             <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 20px; background: linear-gradient(90deg, #25D366, #128C7E); color: #fff;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zM9.079 8.39c-.083-.411-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/></svg>
+              Kirim Pesanan via WhatsApp
+            </button>
          </form>
       </div>
-       <div class="cart-footer">
-         <button class="btn btn-primary" style="width:100%; background: linear-gradient(90deg, #25D366, #128C7E); color: #fff;" onclick="sendWhatsAppCheckout()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zM9.079 8.39c-.083-.411-.304-.552-.57-.649-.26-.098-.517-.146-.732-.146s-.442.05-.612.146c-.17.098-.282.232-.365.411-.083.179-.164.389-.24.588-.076.199-.16.42-.236.611a.28.28 0 0 0 .01.246c.07.152.18.31.3.444.118.133.26.27.413.413.152.143.33.29.53.444.2.152.413.282.64.39.229.108.47.163.732.163.26 0 .5-.055.7-.163.2-.108.35-.27.45-.477.1-.207.15-.462.15-.764s-.05-.59-.15-.764c-.1-.207-.25-.371-.45-.477s-.42-.163-.7-.163c-.22 0-.41.04-.57.123-.16.084-.28.2-.36.36s-.13.34-.16.53c-.03.19-.01.38.03.53.05.15.13.28.23.38.1.1.23.18.38.23.15.05.3.08.43.08.16 0 .3-.03.43-.08.13-.05.25-.13.35-.23.1-.1.18-.23.23-.38.05-.15.08-.3.08-.43s-.03-.3-.08-.43c-.05-.13-.13-.25-.23-.35-.1-.1-.23-.18-.38-.23z"/></svg>
-          Kirim Pesanan via WhatsApp
-        </button>
-       </div>
+       <div class="cart-footer" style="padding: 10px;"></div>
     </div>
   </div>
 
